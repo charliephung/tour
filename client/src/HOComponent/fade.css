@@ -1,0 +1,10 @@
+.example-appear {
+    opacity: .1;
+    width: 101%;
+}
+
+.example-appear.example-appear-active {
+    opacity: 1;
+    width: 100%;
+    transition: all .2s ease-out;
+}
