@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Review = require("./Review");
 const { Schema } = mongoose;
 
 const TripSchema = new Schema({
@@ -32,10 +33,8 @@ const TripSchema = new Schema({
   },
   reviews: [
     {
-      review: {
-        type: Schema.Types.ObjectId,
-        ref: "reviews"
-      }
+      type: Schema.Types.ObjectId,
+      ref: "reviews"
     }
   ],
   rating: [
@@ -55,5 +54,22 @@ const TripSchema = new Schema({
     default: Date.now
   }
 });
+
+TripSchema.methods.addReview = review => {
+  return new Promise((resolve, reject) => {
+    new Review({
+      tripId: review.tripId,
+      userId: review.userId,
+      text: review.text
+    })
+      .save()
+      .then(newReview => {
+        resolve(newReview);
+      })
+      .catch(err => {
+        reject(null);
+      });
+  });
+};
 
 module.exports = Trip = mongoose.model("trips", TripSchema);

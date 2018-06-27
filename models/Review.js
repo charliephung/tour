@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const ReviewSchema = new Schema({
-  user: {
+  userId: {
     type: Schema.Types.ObjectId,
     ref: "users",
     required: true
@@ -22,4 +22,4 @@ const ReviewSchema = new Schema({
   }
 });
 
-module.exports = Review = mongoose.model("trip", ReviewSchema);
+module.exports = Review = mongoose.model("reviews", ReviewSchema);
