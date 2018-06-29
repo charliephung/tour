@@ -252,7 +252,6 @@ export class TripPage extends Component {
           {/* Overview */}
           <Overview
             onRef={ref => (this.overview = ref)}
-            // ref={this.overview}
             content={overviewText}
             guide={overviewText}
             rating={4}

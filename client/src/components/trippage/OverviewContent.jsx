@@ -1,23 +1,12 @@
 import React, { Component } from "react";
 import { textToParagraph } from "../../utils";
+import withRef from "../../HOComponent/withRef";
 
 export class OverviewContent extends Component {
   constructor(props) {
     super(props);
-
     this.overviewContent = React.createRef();
   }
-
-  componentDidMount() {
-    this.props.onRef(this);
-  }
-  componentWillUnmount() {
-    this.props.onRef(undefined);
-  }
-  getPosition() {
-    return this.overviewContent.current.getBoundingClientRect().top;
-  }
-
   render() {
     const { text } = this.props;
     return (
@@ -29,4 +18,4 @@ export class OverviewContent extends Component {
   }
 }
 
-export default OverviewContent;
+export default withRef(OverviewContent);

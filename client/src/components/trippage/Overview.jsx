@@ -3,12 +3,15 @@ import OverviewContent from "./OverviewContent";
 import OverviewGuide from "./OverviewGuide";
 import OverviewReview from "./OverviewReview";
 import OverviewComment from "./OverviewComment";
+import Test from "./Test";
 
 export class Overview extends Component {
   constructor(props) {
     super(props);
 
     this.overview = React.createRef();
+    this.overviewContent = React.createRef();
+    this.test = React.createRef();
   }
 
   componentDidMount() {
@@ -19,21 +22,26 @@ export class Overview extends Component {
   }
 
   getPosition = () => {
+    console.log(this.test.current.props.getDOMRect("test"));
+    // TODO
+    console.log(
+      this.overviewContent.current.props.getDOMRect("overviewContent")
+    );
+
     return {
-      overview: this.overviewContent.getPosition(),
-      guide: this.overviewGuide.getPosition(),
-      review: this.overviewReview.getPosition()
+      // overview: this.overviewContent.getPosition(),
+      // guide: this.overviewGuide.getPosition(),
+      // review: this.overviewReview.getPosition()
     };
   };
   render() {
     const { content, guide, rating, comments, totalReviews } = this.props;
+
     return (
       <section className="overview" ref={this.overview}>
+        <Test ref={this.test} />
         {/* Text */}
-        <OverviewContent
-          text={content}
-          onRef={ref => (this.overviewContent = ref)}
-        />
+        <OverviewContent text={content} ref={this.overviewContent} />
         <hr />
         {/* Guide */}
         <OverviewGuide text={guide} onRef={ref => (this.overviewGuide = ref)} />

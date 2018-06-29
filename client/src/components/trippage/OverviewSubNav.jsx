@@ -5,8 +5,6 @@ const OverviewSubNav = ({
   overviewNavListStyle,
   viewingContent
 }) => {
-  console.log(viewingContent);
-
   return (
     <div className="overview__nav" style={overviewNavStyle}>
       <ul className="overview__list" style={overviewNavListStyle}>
