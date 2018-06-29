@@ -1,5 +1,4 @@
 import React from "react";
-import withSlideOnMount from "../../HOComponent/slideOnMount";
 
 const HeaderImage = ({ imageUrl }) => {
   return (
@@ -12,4 +11,4 @@ const HeaderImage = ({ imageUrl }) => {
   );
 };
 
-export default withSlideOnMount(HeaderImage);
+export default HeaderImage;

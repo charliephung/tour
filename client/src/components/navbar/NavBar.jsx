@@ -2,10 +2,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "./test.css";
 
-const NavBar = () => {
+const NavBar = ({ navStyle, navListStyle }) => {
   return (
-    <nav className="navbar">
-      <div className="navbar__component">
+    <nav className="navbar" style={navStyle}>
+      <div className="navbar__component" style={navListStyle}>
         <ul className="navbar__list">
           <li className="navbar__item">
             <Link to="/">Tour</Link>

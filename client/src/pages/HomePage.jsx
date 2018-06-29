@@ -5,8 +5,9 @@ import NavBar from "../components/navbar/NavBar";
 import FeatureCard from "../components/homepage/FeatureCard";
 import FeatureTrip from "../components/homepage/FeatureTrip";
 import Footer from "../components/footer/Footer";
-import withFadeOnMount from "../HOComponent/fadeOnMount";
 import HeaderImage from "../components/homepage/HeaderImage";
+import ReactCSSTransitionGroup from "react-addons-css-transition-group"; // ES6
+import "../HOComponent/fade.css";
 
 // feature card
 const cardContent = [
@@ -107,7 +108,7 @@ export class HomePage extends Component {
 
     this.state = {
       activeLink: 0,
-      headerImage: 0
+      headerImage: headerImage[1].imageUrl
     };
   }
 
@@ -130,13 +131,11 @@ export class HomePage extends Component {
   // }
 
   onTest = () => {
-    this.setState({ headerImage: this.state.headerImage + 1 });
+    this.setState({ headerImage: headerImage[0].imageUrl });
   };
 
   render() {
-    const myHeaderImage = (
-      <HeaderImage imageUrl={headerImage[this.state.headerImage].imageUrl} />
-    );
+    const myHeaderImage = [<HeaderImage imageUrl={this.state.headerImage} />];
 
     return (
       <div className="container">
@@ -202,4 +201,4 @@ const mapStateToProps = state => ({});
 
 const mapDispatchToProps = {};
 
-export default withFadeOnMount(HomePage);
+export default HomePage;

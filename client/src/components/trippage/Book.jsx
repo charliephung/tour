@@ -1,11 +1,17 @@
 import React, { Component } from "react";
 
 export class Book extends Component {
+  constructor(props) {
+    super(props);
+
+    this.bookForm = React.createRef();
+  }
+
   render() {
     return (
-      <section className="book">
+      <section className="book" ref={this.bookForm}>
         <form className="book__body">
-          <div className="book__form">
+          <div className="book__form" style={this.props.style}>
             <input
               className="book__form__name"
               type="text"
