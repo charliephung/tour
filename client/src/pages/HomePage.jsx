@@ -1,14 +1,17 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { compose } from "redux";
 import { connect } from "react-redux";
+// Component
 import NavBar from "../components/navbar/NavBar";
 import FeatureCard from "../components/homepage/FeatureCard";
 import FeatureTrip from "../components/homepage/FeatureTrip";
 import Footer from "../components/footer/Footer";
 import HeaderImage from "../components/homepage/HeaderImage";
-import ReactCSSTransitionGroup from "react-addons-css-transition-group"; // ES6
 import "../HOComponent/fade.css";
 import withFadeOnMout from "../HOComponent/fadeOnMount";
+// Actions
+import { actFetchTrip } from "../actions/trip";
 
 // feature card
 const cardContent = [
@@ -102,7 +105,9 @@ const tripNav = [
 ];
 
 export class HomePage extends Component {
-  static propTypes = {};
+  static propTypes = {
+    actFetchTrip: PropTypes.func.isRequired
+  };
 
   constructor(props) {
     super(props);
@@ -121,6 +126,9 @@ export class HomePage extends Component {
   };
 
   componentDidMount() {
+    this.props.actFetchTrip();
+    console.log(this.props);
+
     this.interval = setInterval(() => {
       this.setState({
         headerImage: (this.state.headerImage + 1) % 3,
@@ -143,6 +151,7 @@ export class HomePage extends Component {
   render() {
     const myHeaderImage = headerImage.map((ele, index) => (
       <HeaderImage
+        key={index}
         in={this.state.in}
         active={this.state.headerImage === index}
         imageUrl={ele.imageUrl}
@@ -209,8 +218,18 @@ export class HomePage extends Component {
   }
 }
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+  trips: state.trips
+});
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  actFetchTrip
+};
 
-export default withFadeOnMout(HomePage);
+export default compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  ),
+  withFadeOnMout
+)(HomePage);
