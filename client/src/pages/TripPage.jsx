@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import * as Scroll from "react-scroll";
+
 import NavBar from "../components/navbar/NavBar";
 import Footer from "../components/footer/Footer";
 import Overview from "../components/trippage/Overview";
@@ -7,6 +9,8 @@ import { Book } from "../components/trippage/Book";
 import Gallery from "../components/trippage/Gallery";
 import withFadeOnMount from "../HOComponent/fadeOnMount";
 import OverviewSubNav from "../components/trippage/OverviewSubNav";
+import * as tripPageStyles from "./css/tripPageStyle";
+import indexOfMin from "../utils/indexOfMin";
 
 const overviewText = `
 Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur nihil odit alias exercitationem non animi excepturi dolor magni distinctio. Enim in temporibus sed quaerat impedit veniam fuga voluptate nam incidunt. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas dignissimos eum eveniet obcaecati, a deserunt sint non debitis nulla ab reprehenderit explicabo similique officiis doloremque necessitatibus nesciunt ad, dolore reiciendis?
@@ -68,85 +72,20 @@ const gallery = [
   }
 ];
 
-const NavBarStyles = {
-  position: "fixed",
-  backgroundColor: "#fff",
-  gridColumn: "1 / -1",
-  display: "grid",
-  width: "100%",
-  zIndex: "1000",
-  gridTemplateColumns: "repeat(8, 1fr)",
-  borderBottom: "2px solid rgb(228, 229, 230)"
-};
-
-const NavBarListStyles = {
-  gridColumn: "2 / span 6"
-};
-const overviewNavListStyle = {
-  display: "flex",
-  flex: "0 1 0%",
-  gridColumn: "3 / span 4"
-};
-const overviewNavListStyleMedia = {
-  display: "flex",
-  flex: "0 1 0%",
-  gridColumn: "1 / -1"
-};
-const overviewNavPreStyle = {
-  gridTemplateColumns: "repeat(8, 1fr)",
-  width: "100%",
-  position: "fixed",
-  top: "0",
-  fontSize: "1.8rem",
-  display: "grid",
-  zIndex: "900",
-  transition: "all .2s"
-};
-const overviewNavStyleMedia = {
-  backgroundColor: "rgb(255, 255, 255)",
-  gridTemplateColumns: "repeat(10, 1fr)",
-  width: "100%",
-  position: "fixed",
-  top: "31px",
-  fontSize: "1.8rem",
-  display: "grid",
-  zIndex: "900",
-  transition: "all .2s",
-  borderBottom: "2px solid rgb(228, 229, 230)"
-};
-const overviewNavStyle = {
-  backgroundColor: "rgb(255, 255, 255)",
-  gridTemplateColumns: "repeat(10, 1fr)",
-  width: "100%",
-  position: "fixed",
-  top: "56px",
-  fontSize: "1.8rem",
-  display: "grid",
-  zIndex: "900",
-  transition: "all .2s",
-  borderBottom: "2px solid rgb(228, 229, 230)"
-};
-
-const bookFormStyle = {
-  position: "fixed",
-  top: "110px",
-  width: "312px",
-  transition: "all .2s"
-};
-
 export class TripPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      overviewNavStyle: overviewNavPreStyle,
-      overviewNavListStyle: overviewNavListStyle,
-      bookFormStyle: overviewNavListStyle,
+      overviewNavStyle: tripPageStyles.overviewNavPreStyle,
+      overviewNavListStyle: tripPageStyles.overviewNavListStyle,
+      bookFormStyle: tripPageStyles.overviewNavListStyle,
       viewingContent: {
         view: "overview"
       }
     };
-    // this.overview = React.createRef();
+    this.overview = React.createRef();
     this.overviewNav = React.createRef();
+    this.gallery = React.createRef();
     this.bookForm = React.createRef();
   }
 
@@ -156,55 +95,121 @@ export class TripPage extends Component {
   componentWillUnmount() {
     window.removeEventListener("scroll", this.onScroll);
   }
-  onScroll = e => {
+
+  onViewContent = () => {
     let viewingContent = {
-      ...this.overview.getPosition(),
-      gallery: this.gallery.getPosition()
+      overview: this.overview.getChildDOMRect().overview.top,
+      guide: this.overview.getChildDOMRect().guide.top,
+      review: this.overview.getChildDOMRect().review.top,
+      gallery: this.gallery.current.props.getDOMRect("gallery").top
     };
-    let positionArr = Object.values(viewingContent).map(ele => Math.abs(ele));
-    let viewingContentPosition = positionArr.indexOf(Math.min(...positionArr));
+    const index = indexOfMin(Object.values(viewingContent), { absolute: true });
     this.setState({
       viewingContent: {
-        view: Object.keys(viewingContent)[viewingContentPosition]
+        view: Object.keys(viewingContent)[index]
       }
     });
+  };
 
+  onChangeStyleByView = (top, stateField, style1, style2) => {
+    if (top < 0) {
+      this.setState({
+        [stateField]: style1
+      });
+    } else {
+      this.setState({
+        [stateField]: style2
+      });
+    }
+  };
+
+  onSetOverviewNavBar = () => {
+    const overviewNavOffSetTop = this.overviewNav.current.getBoundingClientRect()
+      .top;
     // Check if nav is out if wp
-    this.overviewNav.current.getBoundingClientRect().top - 60 < 0 &&
-      this.setState({
-        // Style Overview navbar to fix
-        overviewNavStyle: overviewNavStyle,
-        overviewNavListStyle: overviewNavListStyle
-      });
-    this.overviewNav.current.getBoundingClientRect().top - 60 > 0 &&
-      this.setState({
-        // Style Overview navbar to normal
-        overviewNavStyle: overviewNavPreStyle,
-        overviewNavListStyle: overviewNavListStyle
-      });
-    // Check if bookform is out of wp then set style = fix or normal
-    this.bookForm.current.bookForm.current.getBoundingClientRect().top - 111 <
-      0 && this.setState({ bookFormStyle: bookFormStyle });
-    this.bookForm.current.bookForm.current.getBoundingClientRect().top - 111 >
-      0 && this.setState({ bookFormStyle: null });
-
+    this.onChangeStyleByView(
+      overviewNavOffSetTop - 60,
+      "overviewNavStyle",
+      tripPageStyles.overviewNavStyle,
+      tripPageStyles.overviewNavPreStyle
+    );
+    this.onChangeStyleByView(
+      overviewNavOffSetTop - 60,
+      "overviewNavListStyle",
+      tripPageStyles.overviewNavListStyle,
+      tripPageStyles.overviewNavListStyle
+    );
     // Check if viewport width is lower than 1100
     if (
       Math.max(document.documentElement.clientWidth, window.innerWidth || 0) <=
       1100
     ) {
       // Check if nav is out if wp
-      this.overviewNav.current.getBoundingClientRect().top - 60 < 0 &&
-        this.setState({
-          overviewNavStyle: overviewNavStyleMedia,
-          overviewNavListStyle: overviewNavListStyleMedia
-        });
-      this.overviewNav.current.getBoundingClientRect().top - 60 > 0 &&
-        this.setState({
-          overviewNavStyle: overviewNavPreStyle,
-          overviewNavListStyle: overviewNavListStyle
-        });
+      this.onChangeStyleByView(
+        overviewNavOffSetTop - 60,
+        "overviewNavStyle",
+        tripPageStyles.overviewNavStyleMedia,
+        tripPageStyles.overviewNavPreStyle
+      );
+      this.onChangeStyleByView(
+        overviewNavOffSetTop - 60,
+        "overviewNavListStyle",
+        tripPageStyles.overviewNavListStyleMedia,
+        tripPageStyles.overviewNavListStyle
+      );
+    }
+  };
+  onSetBookForm = () => {
+    // Check if bookform is out of wp then set style = fix or normal
+    this.bookForm.current.bookForm.current.getBoundingClientRect().top - 111 <
+      0 && this.setState({ bookFormStyle: tripPageStyles.bookFormStyle });
+    this.bookForm.current.bookForm.current.getBoundingClientRect().top - 111 >
+      0 && this.setState({ bookFormStyle: null });
+    // Check if viewport width is lower than 1100
+    if (
+      Math.max(document.documentElement.clientWidth, window.innerWidth || 0) <=
+      1100
+    ) {
       this.setState({ bookFormStyle: null });
+    }
+  };
+
+  onScroll = e => {
+    this.onViewContent();
+    this.onSetOverviewNavBar();
+    this.onSetBookForm();
+  };
+
+  onAnimatedScroll = offsetHeight => {
+    Scroll.animateScroll.scrollTo(offsetHeight, {
+      duration: 500
+    });
+  };
+
+  onScrollToSession = e => {
+    switch (e.target.value) {
+      case 0:
+        this.onAnimatedScroll(
+          this.overview.getChildPosition().overview.offsetHeight - 100
+        );
+        break;
+      case 1:
+        this.onAnimatedScroll(
+          this.overview.getChildPosition().guide.offsetHeight - 100
+        );
+        break;
+      case 2:
+        this.onAnimatedScroll(
+          this.overview.getChildPosition().review.offsetHeight - 100
+        );
+        break;
+      case 3:
+        this.onAnimatedScroll(
+          this.gallery.current.props.getPosition("gallery").offsetHeight - 100
+        );
+        break;
+      default:
+        break;
     }
   };
 
@@ -212,12 +217,16 @@ export class TripPage extends Component {
     return (
       <div className="container">
         {/* Navbar */}
-        <NavBar navStyle={NavBarStyles} navListStyle={NavBarListStyles} />
+        <NavBar
+          navStyle={tripPageStyles.NavBarStyles}
+          navListStyle={tripPageStyles.NavBarListStyles}
+        />
         {/* Sub nav */}
         <OverviewSubNav
           viewingContent={this.state.viewingContent.view}
           overviewNavStyle={this.state.overviewNavStyle}
           overviewNavListStyle={this.state.overviewNavListStyle}
+          onScrollToSession={this.onScrollToSession}
         />
         {/* Header */}
         <header className="header">
@@ -238,14 +247,34 @@ export class TripPage extends Component {
             <div className="overview__nav">
               <ul className="overview__list">
                 <li
+                  value="0"
+                  onClick={this.onScrollToSession}
                   className="overview__list-item 
                  active"
                 >
                   Overview
                 </li>
-                <li className="overview__list-item">Guide</li>
-                <li className="overview__list-item">Review</li>
-                <li className="overview__list-item">Gallery</li>
+                <li
+                  value="1"
+                  onClick={this.onScrollToSession}
+                  className="overview__list-item"
+                >
+                  Guide
+                </li>
+                <li
+                  value="2"
+                  onClick={this.onScrollToSession}
+                  className="overview__list-item"
+                >
+                  Review
+                </li>
+                <li
+                  value="3"
+                  onClick={this.onScrollToSession}
+                  className="overview__list-item"
+                >
+                  Gallery
+                </li>
               </ul>
             </div>
           </section>
@@ -263,7 +292,7 @@ export class TripPage extends Component {
           <Book ref={this.bookForm} style={this.state.bookFormStyle} />
 
           {/* Gallery */}
-          <Gallery images={gallery} onRef={ref => (this.gallery = ref)} />
+          <Gallery images={gallery} ref={this.gallery} />
         </div>
         <Footer />
       </div>

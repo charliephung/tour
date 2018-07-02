@@ -8,6 +8,7 @@ import Footer from "../components/footer/Footer";
 import HeaderImage from "../components/homepage/HeaderImage";
 import ReactCSSTransitionGroup from "react-addons-css-transition-group"; // ES6
 import "../HOComponent/fade.css";
+import withFadeOnMout from "../HOComponent/fadeOnMount";
 
 // feature card
 const cardContent = [
@@ -108,7 +109,8 @@ export class HomePage extends Component {
 
     this.state = {
       activeLink: 0,
-      headerImage: headerImage[1].imageUrl
+      headerImage: 0,
+      in: true
     };
   }
 
@@ -118,24 +120,34 @@ export class HomePage extends Component {
     });
   };
 
-  // componentDidMount() {
-  //   this.interval = setInterval(() => {
-  //     this.setState({
-  //       headerImage: (this.state.headerImage + 1) % headerImage.length
-  //     });
-  //   }, 2000);
-  // }
+  componentDidMount() {
+    this.interval = setInterval(() => {
+      this.setState({
+        headerImage: (this.state.headerImage + 1) % 3,
+        in: true
+      });
+    }, 2000);
+  }
 
-  // componentWillUnmount() {
-  //   clearInterval(this.interval);
-  // }
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
 
   onTest = () => {
-    this.setState({ headerImage: headerImage[0].imageUrl });
+    this.setState({
+      headerImage: (this.state.headerImage + 1) % 3,
+      in: true
+    });
   };
 
   render() {
-    const myHeaderImage = [<HeaderImage imageUrl={this.state.headerImage} />];
+    const myHeaderImage = headerImage.map((ele, index) => (
+      <HeaderImage
+        in={this.state.in}
+        active={this.state.headerImage === index}
+        imageUrl={ele.imageUrl}
+      />
+    ));
 
     return (
       <div className="container">
@@ -201,4 +213,4 @@ const mapStateToProps = state => ({});
 
 const mapDispatchToProps = {};
 
-export default HomePage;
+export default withFadeOnMout(HomePage);

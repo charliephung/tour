@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import withRef from "../../HOComponent/withRef";
 
 const showImage = images => {
   if (!images) {
@@ -27,15 +28,6 @@ export class Gallery extends Component {
 
     this.gallery = React.createRef();
   }
-  componentDidMount() {
-    this.props.onRef(this);
-  }
-  componentWillUnmount() {
-    this.props.onRef(undefined);
-  }
-  getPosition() {
-    return this.gallery.current.getBoundingClientRect().top;
-  }
   render() {
     const { images } = this.props;
     return (
@@ -47,4 +39,4 @@ export class Gallery extends Component {
   }
 }
 
-export default Gallery;
+export default withRef(Gallery);

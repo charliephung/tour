@@ -1,28 +1,28 @@
-.example-appear {
+.fade-appear {
     opacity: .1;
-    width: 101%;
+    width: 105%;
 }
 
-.example-appear.example-appear-active {
+.fade-appear.fade-appear-active {
     opacity: 1;
     width: 100%;
     transition: all .2s ease-out;
 }
 
-.example-enter {
+.fade-enter {
     opacity: 0.01;
 }
 
-.example-enter.example-enter-active {
+.fade-enter.fade-enter-active {
     opacity: 1;
     transition: opacity 500ms ease-in;
 }
 
-.example-leave {
+.fade-leave {
     opacity: 1;
 }
 
-.example-leave.example-leave-active {
+.fade-leave.fade-leave-active {
     opacity: 0.01;
     transition: opacity 300ms ease-in;
 }

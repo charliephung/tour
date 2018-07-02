@@ -3,7 +3,7 @@ import OverviewContent from "./OverviewContent";
 import OverviewGuide from "./OverviewGuide";
 import OverviewReview from "./OverviewReview";
 import OverviewComment from "./OverviewComment";
-import Test from "./Test";
+import withRef from "../../HOComponent/withRef";
 
 export class Overview extends Component {
   constructor(props) {
@@ -11,7 +11,8 @@ export class Overview extends Component {
 
     this.overview = React.createRef();
     this.overviewContent = React.createRef();
-    this.test = React.createRef();
+    this.overviewGuide = React.createRef();
+    this.overviewReview = React.createRef();
   }
 
   componentDidMount() {
@@ -21,37 +22,43 @@ export class Overview extends Component {
     this.props.onRef(undefined);
   }
 
-  getPosition = () => {
-    console.log(this.test.current.props.getDOMRect("test"));
-    // TODO
-    console.log(
-      this.overviewContent.current.props.getDOMRect("overviewContent")
-    );
-
+  getChildDOMRect = () => {
     return {
-      // overview: this.overviewContent.getPosition(),
-      // guide: this.overviewGuide.getPosition(),
-      // review: this.overviewReview.getPosition()
+      overview: this.overviewContent.current.props.getDOMRect(
+        "overviewContent"
+      ),
+      guide: this.overviewGuide.current.props.getDOMRect("overviewGuide"),
+      review: this.overviewReview.current.props.getDOMRect("overviewReview")
     };
   };
+
+  getChildPosition = () => {
+    return {
+      overview: this.overviewContent.current.props.getPosition(
+        "overviewContent"
+      ),
+      guide: this.overviewGuide.current.props.getPosition("overviewGuide"),
+      review: this.overviewReview.current.props.getPosition("overviewReview")
+    };
+  };
+
   render() {
     const { content, guide, rating, comments, totalReviews } = this.props;
 
     return (
       <section className="overview" ref={this.overview}>
-        <Test ref={this.test} />
         {/* Text */}
         <OverviewContent text={content} ref={this.overviewContent} />
         <hr />
         {/* Guide */}
-        <OverviewGuide text={guide} onRef={ref => (this.overviewGuide = ref)} />
+        <OverviewGuide text={guide} ref={this.overviewGuide} />
         <hr />
         {/* Review */}
         <div className="overview__review mb-md">
           <OverviewReview
             totalReviews={totalReviews}
             rating={rating}
-            onRef={ref => (this.overviewReview = ref)}
+            ref={this.overviewReview}
           />
           {/* Comments */}
           {comments.map((ele, index) => (
@@ -65,4 +72,4 @@ export class Overview extends Component {
   }
 }
 
-export default Overview;
+export default withRef(Overview);

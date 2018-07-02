@@ -1,20 +1,12 @@
 import React, { Component } from "react";
 import { textToParagraph } from "../../utils";
+import withRef from "../../HOComponent/withRef";
 
 export class OverviewGuide extends Component {
   constructor(props) {
     super(props);
 
     this.overviewGuide = React.createRef();
-  }
-  componentDidMount() {
-    this.props.onRef(this);
-  }
-  componentWillUnmount() {
-    this.props.onRef(undefined);
-  }
-  getPosition() {
-    return this.overviewGuide.current.getBoundingClientRect().top;
   }
 
   render() {
@@ -28,4 +20,4 @@ export class OverviewGuide extends Component {
   }
 }
 
-export default OverviewGuide;
+export default withRef(OverviewGuide);

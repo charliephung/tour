@@ -7,11 +7,13 @@ const withFadeOnMout = WrappedComponent => {
     render() {
       return (
         <ReactCSSTransitionGroup
-          transitionName="example"
+          transitionName="fade"
           transitionAppear={true}
-          transitionAppearTimeout={700}
-          transitionEnter={false}
-          transitionLeave={false}
+          transitionAppearTimeout={1000}
+          transitionEnterTimeout={1000}
+          transitionLeaveTimeout={1000}
+          transitionEnter={true}
+          transitionLeave={true}
         >
           <WrappedComponent {...this.props} />
         </ReactCSSTransitionGroup>

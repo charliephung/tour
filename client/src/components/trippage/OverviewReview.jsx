@@ -1,22 +1,13 @@
 import React, { Component } from "react";
 import { showRating } from "../../utils";
+import withRef from "../../HOComponent/withRef";
 
 export class OverviewReview extends Component {
   constructor(props) {
     super(props);
-
     this.overviewReview = React.createRef();
   }
 
-  componentDidMount() {
-    this.props.onRef(this);
-  }
-  componentWillUnmount() {
-    this.props.onRef(undefined);
-  }
-  getPosition() {
-    return this.overviewReview.current.getBoundingClientRect().top;
-  }
   render() {
     const { totalReviews, rating } = this.props;
     return (
@@ -38,4 +29,4 @@ export class OverviewReview extends Component {
   }
 }
 
-export default OverviewReview;
+export default withRef(OverviewReview);
