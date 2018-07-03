@@ -1,14 +1,15 @@
-import { FETCH_TRIP_BY_LOCATION } from "../constants/actionTypes";
+import {
+  FETCH_TRIP_BY_LOCATION,
+  CANCEL_FETCH_TRIP
+} from "../constants/actionTypes";
 
 const initialState = [];
 
 const tripReducer = (state = initialState, actions) => {
+  let index;
   switch (actions.type) {
     case FETCH_TRIP_BY_LOCATION:
-      console.log(actions.payload);
-
-      return [...actions.payload];
-
+      return [...state, { ...actions.payload }];
     default:
       return [];
   }

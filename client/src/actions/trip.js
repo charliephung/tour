@@ -1,17 +1,29 @@
 import axios from "axios";
-import { FETCH_TRIP_BY_LOCATION } from "../constants/actionTypes";
+import {
+  FETCH_TRIP_BY_LOCATION,
+  CANCEL_FETCH_TRIP
+} from "../constants/actionTypes";
 
-export const actFetchTrip = () => {
-  return async dispatch => {
+export const actFetchTrip = location => {
+  return async (dispatch, getState) => {
     try {
-      let trips = await axios.get("/api/trips/location/" + "sai gon");
-
+      const currentTrips = await getState().trips;
+      const trips = await axios.get("/api/trips/location/" + location);
       dispatch({
         type: FETCH_TRIP_BY_LOCATION,
-        payload: trips.data
+        payload: {
+          location,
+          trips: trips.data
+        }
       });
     } catch (error) {
-      console.log(error);
+      dispatch({
+        type: FETCH_TRIP_BY_LOCATION,
+        payload: {
+          location,
+          trips: []
+        }
+      });
     }
   };
 };
