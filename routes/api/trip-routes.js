@@ -20,15 +20,15 @@ router.post(
   }
 );
 
-// @route /api/trips/location/:location
-// @desc get all trip at request location
+// @route /api/trips/:tripId
+// @desc get 1 trip at request location by id
 // @access public
-router.get("/location/:location", (req, res) => {
+router.get("/:tripId", (req, res) => {
   let errors = {};
   const location = req.params.location;
   const regex = new RegExp(".*" + location + ".*", "i");
   Trip.find({
-    location: regex
+    _id: req.params.tripId
   })
     .populate("reviews")
     .populate("tripContent")
@@ -46,6 +46,33 @@ router.get("/location/:location", (req, res) => {
       return res.status(500).json(errors);
     });
 });
+
+// @route /api/trips/location/:location
+// @desc get all trip at request location
+// @access public
+router.get("/location/:location", (req, res) => {
+  let errors = {};
+  const location = req.params.location;
+  const regex = new RegExp(".*" + location + ".*", "i");
+  Trip.find({
+    location: regex
+  })
+    .populate("reviews")
+    .then(trips => {
+      if (trips.length === 0) {
+        errors.error = errormsg["404"];
+        return res.status(400).json(errors);
+      }
+      return res.json(trips);
+    })
+    .catch(err => {
+      console.log(err);
+
+      errors.error = errormsg["500"];
+      return res.status(500).json(errors);
+    });
+});
+
 // @route /api/trips/trip/
 // @desc Post a trip at a location
 // @access Private Admin

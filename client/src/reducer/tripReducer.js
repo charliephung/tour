@@ -1,7 +1,4 @@
-import {
-  FETCH_TRIP_BY_LOCATION,
-  CANCEL_FETCH_TRIP
-} from "../constants/actionTypes";
+import { FETCH_TRIP_BY_LOCATION } from "../constants/actionTypes";
 
 const initialState = [];
 

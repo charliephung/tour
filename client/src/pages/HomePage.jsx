@@ -8,7 +8,7 @@ import FeatureCard from "../components/homepage/FeatureCard";
 import Header from "../components/header/Header";
 import Footer from "../components/footer/Footer";
 import HeaderImage from "../components/homepage/HeaderImage";
-import FeatureTripNotFound from "../components/homepage/FeatureTripNotFound";
+import { Link } from "react-router-dom";
 import "../HOComponent/fade.css";
 import withFadeOnMout from "../HOComponent/fadeOnMount";
 // Actions
@@ -177,15 +177,16 @@ export class HomePage extends Component {
         } else {
           // Populate the trips in the active link
           featureTripContent = trips[activeLink].trips.map((ele, index) => (
-            <LZfeatureTrips
-              key={index}
-              headerImageUrl={ele.headerImageUrl}
-              title={ele.title}
-              pricePerDay={ele.pricePerDay}
-              pricePerPerson={ele.pricePerPerson}
-              rating={ele.rating}
-              reviews={ele.reviews}
-            />
+            <Link key={index} to={ele._id}>
+              <LZfeatureTrips
+                headerImageUrl={ele.headerImageUrl}
+                title={ele.title}
+                pricePerDay={ele.pricePerDay}
+                pricePerPerson={ele.pricePerPerson}
+                rating={ele.rating}
+                reviews={ele.reviews}
+              />
+            </Link>
           ));
         }
       }
