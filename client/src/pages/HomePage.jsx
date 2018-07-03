@@ -5,13 +5,15 @@ import { connect } from "react-redux";
 // Component
 import NavBar from "../components/navbar/NavBar";
 import FeatureCard from "../components/homepage/FeatureCard";
-import FeatureTrip from "../components/homepage/FeatureTrip";
 import Footer from "../components/footer/Footer";
 import HeaderImage from "../components/homepage/HeaderImage";
 import "../HOComponent/fade.css";
 import withFadeOnMout from "../HOComponent/fadeOnMount";
 // Actions
 import { actFetchTrip } from "../actions/trip";
+import Header from "../components/header/Header";
+// Ulti
+import isEmpty from "../utils/isEmpty";
 
 // feature card
 const cardContent = [
@@ -115,7 +117,7 @@ export class HomePage extends Component {
     this.state = {
       activeLink: 0,
       headerImage: 0,
-      in: true
+      LZfeatureTrips: null
     };
   }
 
@@ -125,14 +127,18 @@ export class HomePage extends Component {
     });
   };
 
-  componentDidMount() {
-    this.props.actFetchTrip();
-    console.log(this.props);
+  async componentDidMount() {
+    await this.props.actFetchTrip();
+    if (!isEmpty(this.props.trips)) {
+      const {
+        default: FeatureTrip
+      } = await import("../components/homepage/FeatureTrip");
+      this.setState({ LZfeatureTrips: FeatureTrip });
+    }
 
     this.interval = setInterval(() => {
       this.setState({
-        headerImage: (this.state.headerImage + 1) % 3,
-        in: true
+        headerImage: (this.state.headerImage + 1) % 3
       });
     }, 2000);
   }
@@ -141,33 +147,39 @@ export class HomePage extends Component {
     clearInterval(this.interval);
   }
 
-  onTest = () => {
-    this.setState({
-      headerImage: (this.state.headerImage + 1) % 3,
-      in: true
-    });
-  };
-
   render() {
-    const myHeaderImage = headerImage.map((ele, index) => (
-      <HeaderImage
-        key={index}
-        in={this.state.in}
-        active={this.state.headerImage === index}
-        imageUrl={ele.imageUrl}
-      />
-    ));
+    const { LZfeatureTrips } = this.state;
+    const { trips } = this.props;
+    const featureTrip =
+      LZfeatureTrips &&
+      trips.map((ele, index) => (
+        <LZfeatureTrips
+          key={index}
+          headerImageUrl={ele.headerImageUrl}
+          title={ele.title}
+          pricePerDay={ele.pricePerDay}
+          pricePerPerson={ele.pricePerPerson}
+          rating={ele.rating}
+          reviews={ele.reviews}
+        />
+      ));
 
     return (
       <div className="container">
         {/* Nav */}
         <NavBar />
         {/* Header */}
-        <header onClick={this.onTest} className="header">
-          {myHeaderImage}
-          <h1 className="header__heading heading-1">Experience in unknow</h1>
-          <button className="btn">Experience trip</button>
-        </header>
+        <Header headerImage={headerImage}>
+          {imageArr =>
+            imageArr.map((ele, index) => (
+              <HeaderImage
+                key={index}
+                active={this.state.headerImage === index}
+                imageUrl={ele.imageUrl}
+              />
+            ))
+          }
+        </Header>
         {/* Card F */}
         <section className="feature">
           {cardContent.map((ele, index) => (
@@ -201,16 +213,7 @@ export class HomePage extends Component {
               ))}
             </ul>
           </nav>
-          {tripContent.map((ele, index) => (
-            <FeatureTrip
-              key={index}
-              imageUrl={ele.image}
-              heading={ele.heading}
-              fromPrice={ele.fromPrice}
-              rating={ele.rating}
-              totalReviews={ele.totalReviews}
-            />
-          ))}
+          {featureTrip}
         </section>
         <Footer />
       </div>

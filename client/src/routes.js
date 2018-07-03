@@ -1,7 +1,7 @@
 import React from "react";
 
 import Loadable from "react-loadable";
-import Spinner from "./components/animation/spinner";
+import Spinner from "./components/animation/Spinner";
 
 // Loading
 const Loading = () => <Spinner />;

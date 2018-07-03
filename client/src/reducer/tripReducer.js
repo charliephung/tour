@@ -5,7 +5,7 @@ const initialState = [];
 const tripReducer = (state = initialState, actions) => {
   switch (actions.type) {
     case FETCH_TRIP_BY_LOCATION:
-      console.log(actions);
+      console.log(actions.payload);
 
       return [...actions.payload];
 

@@ -2,7 +2,7 @@ import React from "react";
 
 import "./spinner.css";
 
-const spinner = () => {
+const Spinner = () => {
   return (
     <div className="spinner">
       <div className="bounce1" />
@@ -12,4 +12,4 @@ const spinner = () => {
   );
 };
 
-export default spinner;
+export default Spinner;
