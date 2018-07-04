@@ -16,7 +16,7 @@ const routes = [
     })
   },
   {
-    path: "/:tripId",
+    path: "/trip/:title/:tripId",
     exact: true,
     main: Loadable({
       loader: () => import("./pages/TripPage"),

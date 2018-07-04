@@ -19,7 +19,10 @@ const withRef = WrappedComponent => {
     const getPosition = name => {
       try {
         return {
-          offsetHeight: ref.current[name].current.offsetTop
+          offsetTop: ref.current[name].current.offsetTop,
+          offsetHeight: ref.current[name].current.offsetHeight,
+          offsetLeft: ref.current[name].current.offsetLeft,
+          offsetWidth: ref.current[name].current.offsetWidth
         };
       } catch (error) {
         return null;

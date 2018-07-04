@@ -1,16 +1,24 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import * as Scroll from "react-scroll";
-
+// Comp
 import NavBar from "../components/navbar/NavBar";
 import Footer from "../components/footer/Footer";
 import Overview from "../components/trippage/Overview";
 import { Book } from "../components/trippage/Book";
 import Gallery from "../components/trippage/Gallery";
-import withFadeOnMount from "../HOComponent/fadeOnMount";
 import OverviewSubNav from "../components/trippage/OverviewSubNav";
+import { Header } from "../components/header/Header";
+import { compose } from "redux";
+import { connect } from "react-redux";
+// HOC
+import withFadeOnMount from "../HOComponent/fadeOnMount";
+// CSS
 import * as tripPageStyles from "./css/tripPageStyle";
+// utils
 import indexOfMin from "../utils/indexOfMin";
+// actions
+import { actFetchTripContent } from "../actions/trip";
 
 const overviewText = `
 Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur nihil odit alias exercitationem non animi excepturi dolor magni distinctio. Enim in temporibus sed quaerat impedit veniam fuga voluptate nam incidunt. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas dignissimos eum eveniet obcaecati, a deserunt sint non debitis nulla ab reprehenderit explicabo similique officiis doloremque necessitatibus nesciunt ad, dolore reiciendis?
@@ -96,6 +104,63 @@ export class TripPage extends Component {
     window.removeEventListener("scroll", this.onScroll);
   }
 
+  onChangeStyleByView = (top, stateField, style1, style2) => {
+    if (top < 0) {
+      // Only set state when fallback style is diff
+      if (this.state[stateField] !== style1) {
+        this.setState({
+          [stateField]: style1
+        });
+      }
+    } else {
+      // Only set state when fallback style is diff
+      if (this.state[stateField] !== style2) {
+        this.setState({
+          [stateField]: style2
+        });
+      }
+    }
+  };
+
+  onScroll = e => {
+    this.onViewContent();
+    this.onSetOverviewNavBar();
+    this.onSetBookForm();
+  };
+
+  onAnimatedScroll = offsetHeight => {
+    Scroll.animateScroll.scrollTo(offsetHeight, {
+      duration: 500
+    });
+  };
+
+  onScrollToSession = e => {
+    switch (e.target.value) {
+      case 0:
+        this.onAnimatedScroll(
+          this.overview.getChildPosition().overview.offsetTop - 100
+        );
+        break;
+      case 1:
+        this.onAnimatedScroll(
+          this.overview.getChildPosition().guide.offsetTop - 100
+        );
+        break;
+      case 2:
+        this.onAnimatedScroll(
+          this.overview.getChildPosition().review.offsetTop - 100
+        );
+        break;
+      case 3:
+        this.onAnimatedScroll(
+          this.gallery.current.props.getPosition("gallery").offsetTop - 100
+        );
+        break;
+      default:
+        break;
+    }
+  };
+
   onViewContent = () => {
     let viewingContent = {
       overview: this.overview.getChildDOMRect().overview.top,
@@ -104,21 +169,12 @@ export class TripPage extends Component {
       gallery: this.gallery.current.props.getDOMRect("gallery").top
     };
     const index = indexOfMin(Object.values(viewingContent), { absolute: true });
-    this.setState({
-      viewingContent: {
-        view: Object.keys(viewingContent)[index]
-      }
-    });
-  };
-
-  onChangeStyleByView = (top, stateField, style1, style2) => {
-    if (top < 0) {
+    // Only update when goto new session
+    if (Object.keys(viewingContent)[index] !== this.state.viewingContent.view) {
       this.setState({
-        [stateField]: style1
-      });
-    } else {
-      this.setState({
-        [stateField]: style2
+        viewingContent: {
+          view: Object.keys(viewingContent)[index]
+        }
       });
     }
   };
@@ -159,57 +215,22 @@ export class TripPage extends Component {
       );
     }
   };
+
   onSetBookForm = () => {
     // Check if bookform is out of wp then set style = fix or normal
-    this.bookForm.current.bookForm.current.getBoundingClientRect().top - 111 <
-      0 && this.setState({ bookFormStyle: tripPageStyles.bookFormStyle });
-    this.bookForm.current.bookForm.current.getBoundingClientRect().top - 111 >
-      0 && this.setState({ bookFormStyle: null });
-    // Check if viewport width is lower than 1100
+    this.onChangeStyleByView(
+      this.bookForm.current.bookForm.current.getBoundingClientRect().top - 111,
+      "bookFormStyle",
+      tripPageStyles.bookFormStyle,
+      null
+    );
     if (
       Math.max(document.documentElement.clientWidth, window.innerWidth || 0) <=
       1100
     ) {
-      this.setState({ bookFormStyle: null });
-    }
-  };
-
-  onScroll = e => {
-    this.onViewContent();
-    this.onSetOverviewNavBar();
-    this.onSetBookForm();
-  };
-
-  onAnimatedScroll = offsetHeight => {
-    Scroll.animateScroll.scrollTo(offsetHeight, {
-      duration: 500
-    });
-  };
-
-  onScrollToSession = e => {
-    switch (e.target.value) {
-      case 0:
-        this.onAnimatedScroll(
-          this.overview.getChildPosition().overview.offsetHeight - 100
-        );
-        break;
-      case 1:
-        this.onAnimatedScroll(
-          this.overview.getChildPosition().guide.offsetHeight - 100
-        );
-        break;
-      case 2:
-        this.onAnimatedScroll(
-          this.overview.getChildPosition().review.offsetHeight - 100
-        );
-        break;
-      case 3:
-        this.onAnimatedScroll(
-          this.gallery.current.props.getPosition("gallery").offsetHeight - 100
-        );
-        break;
-      default:
-        break;
+      if (this.state.bookFormStyle !== null) {
+        this.setState({ bookFormStyle: null });
+      }
     }
   };
 
@@ -300,4 +321,14 @@ export class TripPage extends Component {
   }
 }
 
-export default withFadeOnMount(TripPage);
+const mapDispatchToProps = {
+  actFetchTripContent
+};
+
+export default compose(
+  connect(
+    null,
+    mapDispatchToProps
+  ),
+  withFadeOnMount
+)(TripPage);

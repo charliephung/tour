@@ -63,7 +63,6 @@ const lookupLocation = {
   1: "da lat",
   2: "ha noi"
 };
-
 // Trip nav
 const tripNav = [
   {
@@ -115,7 +114,7 @@ export class HomePage extends Component {
 
   async shouldComponentUpdate(nextProps) {
     // Check if cmp should update
-    if (JSON.stringify(this.state.trips) != JSON.stringify(nextProps.trips)) {
+    if (this.state.trips != nextProps.trips) {
       if (this.state.LZfeatureTrips === null) {
         // Load feature trip cmp when need
         const {
@@ -137,17 +136,6 @@ export class HomePage extends Component {
   componentDidMount() {
     // Fetch init data
     this.props.actFetchTrip("sai gon");
-
-    // Change header image
-    this.interval = setInterval(() => {
-      this.setState({
-        headerImage: (this.state.headerImage + 1) % 3
-      });
-    }, 2000);
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.interval);
   }
 
   renderNotFoundCard = loading => {
@@ -173,11 +161,12 @@ export class HomePage extends Component {
       } else {
         if (trips[activeLink].trips.length === 0) {
           // If has 0 trips set comming soon card
+
           featureTripContent = this.renderNotFoundCard({ loading: false });
         } else {
           // Populate the trips in the active link
           featureTripContent = trips[activeLink].trips.map((ele, index) => (
-            <Link key={index} to={ele._id}>
+            <Link key={index} to={"trip/" + ele.title + "/" + ele._id}>
               <LZfeatureTrips
                 headerImageUrl={ele.headerImageUrl}
                 title={ele.title}
@@ -198,11 +187,11 @@ export class HomePage extends Component {
         <NavBar />
         {/* Header */}
         <Header headerImage={headerImage}>
-          {imageArr =>
+          {(imageArr, activeIndex) =>
             imageArr.map((ele, index) => (
               <HeaderImage
                 key={index}
-                active={this.state.headerImage === index}
+                active={activeIndex === index}
                 imageUrl={ele.imageUrl}
               />
             ))
