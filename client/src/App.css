@@ -681,7 +681,7 @@ hr {
 }
 
 .overview {
-    display: grid;
+    /* display: grid; */
     font-size: 2rem;
     grid-column: overview-start /overview-end;
 }

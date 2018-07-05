@@ -114,7 +114,7 @@ export class HomePage extends Component {
 
   async shouldComponentUpdate(nextProps) {
     // Check if cmp should update
-    if (this.state.trips != nextProps.trips) {
+    if (this.state.trips !== nextProps.trips) {
       if (this.state.LZfeatureTrips === null) {
         // Load feature trip cmp when need
         const {

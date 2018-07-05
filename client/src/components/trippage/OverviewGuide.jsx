@@ -1,18 +1,17 @@
 import React, { Component } from "react";
 import { textToParagraph } from "../../utils";
-import withRef from "../../HOComponent/withRef";
 
 export class OverviewGuide extends Component {
   constructor(props) {
     super(props);
 
-    this.overviewGuide = React.createRef();
+    this.ref = React.createRef();
   }
 
   render() {
     const { text } = this.props;
     return (
-      <div className="overview__guide" ref={this.overviewGuide}>
+      <div className="overview__guide" ref={this.ref}>
         <h3 className="heading-3">Guide</h3>
         {textToParagraph(text)}
       </div>
@@ -20,4 +19,4 @@ export class OverviewGuide extends Component {
   }
 }
 
-export default withRef(OverviewGuide);
+export default OverviewGuide;

@@ -7,7 +7,7 @@ const tripContentReducer = (state = initialState, actions) => {
   switch (actions.type) {
     case FETCH_TRIP_BY_ID:
       return {
-        ...actions.payload
+        ...actions.payload.trip
       };
     default:
       return {};

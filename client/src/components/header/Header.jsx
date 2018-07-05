@@ -6,12 +6,16 @@ export class Header extends Component {
     activeIndex: 0
   };
   static propTypes = {
-    headerImage: PropTypes.array.isRequired
+    headerImage: PropTypes.array,
+    button: PropTypes.bool
+  };
+  static defaultProps = {
+    button: true
   };
 
   componentDidMount() {
     // Change header image
-    if (this.props.headerImage.length > 1) {
+    if (this.props.headerImage && this.props.headerImage.length > 1) {
       this.interval = setInterval(() => {
         this.setState({
           activeIndex:
@@ -28,11 +32,15 @@ export class Header extends Component {
   }
 
   render() {
+    const { heading, button } = this.props;
+
     return (
       <header className="header">
         {this.props.children(this.props.headerImage, this.state.activeIndex)}
-        <h1 className="header__heading heading-1">Experience in unknow</h1>
-        <button className="btn">Experience trip</button>
+        <h1 className="header__heading heading-1">
+          {heading ? heading : "Experience in unknow"}
+        </h1>
+        {button && <button className="btn">Experience trip</button>}
       </header>
     );
   }

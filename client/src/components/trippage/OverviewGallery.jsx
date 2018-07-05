@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import withRef from "../../HOComponent/withRef";
 
 const showImage = images => {
   if (!images) {
@@ -11,27 +10,23 @@ const showImage = images => {
   let result = [];
   result = images.map((ele, index) => (
     <div key={index} className={`gallery__item gallery__item--${index + 1}`}>
-      <img
-        className="gallery__photo"
-        src={ele.imageUrl}
-        alt={`image ${index}`}
-      />
+      <img className="gallery__photo" src={ele.imageUrl} alt={`${index}`} />
     </div>
   ));
 
   return result;
 };
 
-export class Gallery extends Component {
+export class OverviewGallery extends Component {
   constructor(props) {
     super(props);
 
-    this.gallery = React.createRef();
+    this.ref = React.createRef();
   }
   render() {
     const { images } = this.props;
     return (
-      <section className="gallery" ref={this.gallery}>
+      <section className="gallery" ref={this.ref}>
         <h3 className="heading-3 ">Gallery</h3>
         {showImage(images)}
       </section>
@@ -39,4 +34,4 @@ export class Gallery extends Component {
   }
 }
 
-export default withRef(Gallery);
+export default OverviewGallery;

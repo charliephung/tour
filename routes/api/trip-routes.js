@@ -27,7 +27,7 @@ router.get("/:tripId", (req, res) => {
   let errors = {};
   const location = req.params.location;
   const regex = new RegExp(".*" + location + ".*", "i");
-  Trip.find({
+  Trip.findOne({
     _id: req.params.tripId
   })
     .populate("reviews")

@@ -1,131 +1,94 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import * as Scroll from "react-scroll";
-// Comp
-import NavBar from "../components/navbar/NavBar";
-import Footer from "../components/footer/Footer";
-import Overview from "../components/trippage/Overview";
-import { Book } from "../components/trippage/Book";
-import Gallery from "../components/trippage/Gallery";
-import OverviewSubNav from "../components/trippage/OverviewSubNav";
-import { Header } from "../components/header/Header";
+// Redux
 import { compose } from "redux";
 import { connect } from "react-redux";
+// Comp
+import NavBar from "../components/navbar/NavBar";
+import Header from "../components/header/Header";
+import HeaderImage from "../components/homepage/HeaderImage";
+import Overview from "../components/trippage/Overview";
+import OverviewNav from "../components/trippage/OverviewNav";
+import OverviewNavListItem from "../components/trippage/OverviewNavListItem";
+import OverviewSubNav from "../components/trippage/OverviewSubNav";
+import OverviewContent from "../components/trippage/OverviewContent";
+import OverviewGuide from "../components/trippage/OverviewGuide";
+import OverviewReview from "../components/trippage/OverviewReview";
+import OverviewComment from "../components/trippage/OverviewComment";
+import Gallery from "../components/trippage/OverviewGallery";
+import Book from "../components/trippage/Book";
+import Footer from "../components/footer/Footer";
 // HOC
 import withFadeOnMount from "../HOComponent/fadeOnMount";
 // CSS
-import * as tripPageStyles from "./css/tripPageStyle";
-// utils
-import indexOfMin from "../utils/indexOfMin";
+import {
+  overviewNavPreStyle,
+  overviewNavListStyle,
+  overviewNavStyle,
+  overviewNavStyleMedia,
+  overviewNavListStyleMedia,
+  bookFormStyle,
+  NavBarStyles,
+  NavBarListStyles
+} from "./css/tripPageStyle";
 // actions
 import { actFetchTripContent } from "../actions/trip";
-
-const overviewText = `
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur nihil odit alias exercitationem non animi excepturi dolor magni distinctio. Enim in temporibus sed quaerat impedit veniam fuga voluptate nam incidunt. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas dignissimos eum eveniet obcaecati, a deserunt sint non debitis nulla ab reprehenderit explicabo similique officiis doloremque necessitatibus nesciunt ad, dolore reiciendis?
-
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur nihil odit alias exercitationem non animi excepturi dolor magni distinctio. Enim in temporibus sed quaerat impedit veniam fuga voluptate nam incidunt.
-
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur nihil odit alias exercitationem non animi excepturi dolor magni distinctio. Enim in temporibus sed quaerat impedit veniam fuga voluptate nam incidunt. Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum odio aliquid et, earum aperiam placeat aut dignissimos dolore praesentium architecto accusamus veniam mollitia voluptatibus quisquam nam eveniet in vel dicta?
-`;
-
-const comment = [
-  {
-    userImageUrl: "https://randomuser.me/portraits/women/2.jpg",
-    username: "Tom",
-    date: "27/03/2018",
-    text: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur nihil odit alias exercitationem non animi excepturi dolor magni distinctio. Enim in temporibus sed quaerat impedit veniam fuga voluptate nam incidunt. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas dignissimos eum eveniet obcaecati, a deserunt sint non debitis nulla ab reprehenderit explicabo similique officiis doloremque necessitatibus nesciunt ad, dolore reiciendis?
-
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur nihil odit alias exercitationem non animi excepturi dolor magni distinctio. Enim in temporibus sed quaerat impedit veniam fuga voluptate nam incidunt.
-
-Lor`
-  },
-  {
-    userImageUrl: "https://randomuser.me/portraits/women/2.jpg",
-    username: "Tom",
-    date: "27/03/2018",
-    text: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur nihil odit alias exercitationem non animi excepturi dolor magni distinctio. Enim in temporibus sed quaerat impedit veniam fuga voluptate nam incidunt. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas dignissimos eum eveniet obcaecati, a deserunt sint non debitis nulla ab reprehenderit explicabo similique officiis doloremque necessitatibus nesciunt ad, dolore reiciendis?
-
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur nihil odit alias exercitationem non animi excepturi dolor magni distinctio. Enim in temporibus sed quaerat impedit veniam fuga voluptate nam incidunt.
-
-Lor`
-  },
-  {
-    userImageUrl: "https://randomuser.me/portraits/women/2.jpg",
-    username: "Tom",
-    date: "27/03/2018",
-    text: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur nihil odit alias exercitationem non animi excepturi dolor magni distinctio. Enim in temporibus sed quaerat impedit veniam fuga voluptate nam incidunt. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas dignissimos eum eveniet obcaecati, a deserunt sint non debitis nulla ab reprehenderit explicabo similique officiis doloremque necessitatibus nesciunt ad, dolore reiciendis?
-
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur nihil odit alias exercitationem non animi excepturi dolor magni distinctio. Enim in temporibus sed quaerat impedit veniam fuga voluptate nam incidunt.
-
-Lor`
-  }
-];
-
-const gallery = [
-  {
-    imageUrl:
-      "https://images.unsplash.com/photo-1491555103944-7c647fd857e6?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=bc40334a7838deb2c079a276fa78ac30&auto=format&fit=crop&w=500&q=60"
-  },
-  {
-    imageUrl:
-      "https://images.unsplash.com/photo-1491555103944-7c647fd857e6?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=bc40334a7838deb2c079a276fa78ac30&auto=format&fit=crop&w=500&q=60"
-  },
-  {
-    imageUrl:
-      "https://images.unsplash.com/photo-1491555103944-7c647fd857e6?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=bc40334a7838deb2c079a276fa78ac30&auto=format&fit=crop&w=500&q=60"
-  },
-  {
-    imageUrl:
-      "https://images.unsplash.com/photo-1491555103944-7c647fd857e6?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=bc40334a7838deb2c079a276fa78ac30&auto=format&fit=crop&w=500&q=60"
-  }
-];
+import isEmpty from "../utils/isEmpty";
 
 export class TripPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      overviewNavStyle: tripPageStyles.overviewNavPreStyle,
-      overviewNavListStyle: tripPageStyles.overviewNavListStyle,
-      bookFormStyle: tripPageStyles.overviewNavListStyle,
+      overviewNavStyle: overviewNavPreStyle,
+      overviewNavListStyle: overviewNavListStyle,
+      bookFormStyle: overviewNavListStyle,
       viewingContent: {
         view: "overview"
-      }
+      },
+      tripContent: null
     };
     this.overview = React.createRef();
+    this.content = React.createRef();
+    this.guide = React.createRef();
+    this.review = React.createRef();
+    this.comment = React.createRef();
     this.overviewNav = React.createRef();
     this.gallery = React.createRef();
     this.bookForm = React.createRef();
   }
 
   componentDidMount() {
+    this.props.actFetchTripContent(this.props.match.params.tripId);
+
     window.addEventListener("scroll", this.onScroll);
   }
   componentWillUnmount() {
     window.removeEventListener("scroll", this.onScroll);
   }
 
-  onChangeStyleByView = (top, stateField, style1, style2) => {
-    if (top < 0) {
+  onToggleStyle = (ceiling, stateField, preStyle, nextStyle) => {
+    if (ceiling < 0) {
       // Only set state when fallback style is diff
-      if (this.state[stateField] !== style1) {
+      if (this.state[stateField] !== preStyle) {
         this.setState({
-          [stateField]: style1
+          [stateField]: preStyle
         });
       }
     } else {
       // Only set state when fallback style is diff
-      if (this.state[stateField] !== style2) {
+      if (this.state[stateField] !== nextStyle) {
         this.setState({
-          [stateField]: style2
+          [stateField]: nextStyle
         });
       }
     }
   };
 
-  onScroll = e => {
-    this.onViewContent();
+  onScroll = () => {
+    // this.onViewContent();
     this.onSetOverviewNavBar();
-    this.onSetBookForm();
+    // this.onSetBookForm();
   };
 
   onAnimatedScroll = offsetHeight => {
@@ -138,22 +101,22 @@ export class TripPage extends Component {
     switch (e.target.value) {
       case 0:
         this.onAnimatedScroll(
-          this.overview.getChildPosition().overview.offsetTop - 100
+          this.overview.getChildrenOffset().OverviewContent.offsetTop - 100
         );
         break;
       case 1:
         this.onAnimatedScroll(
-          this.overview.getChildPosition().guide.offsetTop - 100
+          this.overview.getChildrenOffset().OverviewGuide.offsetTop - 100
         );
         break;
       case 2:
         this.onAnimatedScroll(
-          this.overview.getChildPosition().review.offsetTop - 100
+          this.overview.getChildrenOffset().OverviewReview.offsetTop - 100
         );
         break;
       case 3:
         this.onAnimatedScroll(
-          this.gallery.current.props.getPosition("gallery").offsetTop - 100
+          this.overview.getChildrenOffset().OverviewGallery.offsetTop - 100
         );
         break;
       default:
@@ -161,59 +124,61 @@ export class TripPage extends Component {
     }
   };
 
-  onViewContent = () => {
-    let viewingContent = {
-      overview: this.overview.getChildDOMRect().overview.top,
-      guide: this.overview.getChildDOMRect().guide.top,
-      review: this.overview.getChildDOMRect().review.top,
-      gallery: this.gallery.current.props.getDOMRect("gallery").top
-    };
-    const index = indexOfMin(Object.values(viewingContent), { absolute: true });
-    // Only update when goto new session
-    if (Object.keys(viewingContent)[index] !== this.state.viewingContent.view) {
-      this.setState({
-        viewingContent: {
-          view: Object.keys(viewingContent)[index]
-        }
-      });
-    }
-  };
+  // onViewContent = () => {
+  //   let viewingContent = {
+  //     overview: this.overview.getChildDOMRect().overview.top,
+  //     guide: this.overview.getChildDOMRect().guide.top,
+  //     review: this.overview.getChildDOMRect().review.top,
+  //     gallery: this.gallery.current.props.getDOMRect("gallery").top
+  //   };
+  //   const index = indexOfMin(Object.values(viewingContent), { absolute: true });
+  //   // Only update when goto new session
+  //   if (Object.keys(viewingContent)[index] !== this.state.viewingContent.view) {
+  //     this.setState({
+  //       viewingContent: {
+  //         view: Object.keys(viewingContent)[index]
+  //       }
+  //     });
+  //   }
+  // };
 
   onSetOverviewNavBar = () => {
-    const overviewNavOffSetTop = this.overviewNav.current.getBoundingClientRect()
-      .top;
+    // console.log(this.overview.getChildrenPosition().OverviewContent.top - 60);
+
+    const overviewNavOffSetTop =
+      this.overview.getChildrenPosition().OverviewContent.top - 60;
     // Check if nav is out if wp
-    this.onChangeStyleByView(
-      overviewNavOffSetTop - 60,
+    this.onToggleStyle(
+      overviewNavOffSetTop,
       "overviewNavStyle",
-      tripPageStyles.overviewNavStyle,
-      tripPageStyles.overviewNavPreStyle
+      overviewNavStyle,
+      overviewNavPreStyle
     );
-    this.onChangeStyleByView(
-      overviewNavOffSetTop - 60,
+    this.onToggleStyle(
+      overviewNavOffSetTop,
       "overviewNavListStyle",
-      tripPageStyles.overviewNavListStyle,
-      tripPageStyles.overviewNavListStyle
+      overviewNavListStyle,
+      overviewNavListStyle
     );
-    // Check if viewport width is lower than 1100
-    if (
-      Math.max(document.documentElement.clientWidth, window.innerWidth || 0) <=
-      1100
-    ) {
-      // Check if nav is out if wp
-      this.onChangeStyleByView(
-        overviewNavOffSetTop - 60,
-        "overviewNavStyle",
-        tripPageStyles.overviewNavStyleMedia,
-        tripPageStyles.overviewNavPreStyle
-      );
-      this.onChangeStyleByView(
-        overviewNavOffSetTop - 60,
-        "overviewNavListStyle",
-        tripPageStyles.overviewNavListStyleMedia,
-        tripPageStyles.overviewNavListStyle
-      );
-    }
+    // // Check if viewport width is lower than 1100
+    // if (
+    //   Math.max(document.documentElement.clientWidth, window.innerWidth || 0) <=
+    //   1100
+    // ) {
+    //   // Check if nav is out if wp
+    //   this.onToggleStyle(
+    //     overviewNavOffSetTop,
+    //     "overviewNavStyle",
+    //     overviewNavStyleMedia,
+    //     overviewNavPreStyle
+    //   );
+    //   this.onToggleStyle(
+    //     overviewNavOffSetTop,
+    //     "overviewNavListStyle",
+    //     overviewNavListStyleMedia,
+    //     overviewNavListStyle
+    //   );
+    // }
   };
 
   onSetBookForm = () => {
@@ -221,7 +186,7 @@ export class TripPage extends Component {
     this.onChangeStyleByView(
       this.bookForm.current.bookForm.current.getBoundingClientRect().top - 111,
       "bookFormStyle",
-      tripPageStyles.bookFormStyle,
+      bookFormStyle,
       null
     );
     if (
@@ -235,13 +200,21 @@ export class TripPage extends Component {
   };
 
   render() {
+    const {
+      headerImageUrl,
+      pricePerDay,
+      pricePerPerson,
+      rating,
+      reviews,
+      title,
+      tripContent,
+      gallery
+    } = this.props.tripContent;
+
     return (
       <div className="container">
         {/* Navbar */}
-        <NavBar
-          navStyle={tripPageStyles.NavBarStyles}
-          navListStyle={tripPageStyles.NavBarListStyles}
-        />
+        <NavBar navStyle={NavBarStyles} navListStyle={NavBarListStyles} />
         {/* Sub nav */}
         <OverviewSubNav
           viewingContent={this.state.viewingContent.view}
@@ -250,70 +223,53 @@ export class TripPage extends Component {
           onScrollToSession={this.onScrollToSession}
         />
         {/* Header */}
-        <header className="header">
-          <div
-            className="header__image"
-            style={{
-              backgroundImage: `linear-gradient(rgba(20, 30, 48, 0.6), rgba(36, 59, 85, 0.6)), url(${
-                gallery[0].imageUrl
-              }`
-            }}
-          />
-          <h1 className="header__heading heading-1">Someware ADVENTURE</h1>
-        </header>
+        <Header heading={title} button={false}>
+          {() => <HeaderImage active={true} imageUrl={headerImageUrl} />}
+        </Header>
         {/* Content */}
         <div className="sub-container">
           {/* Overview  nav*/}
-          <section ref={this.overviewNav} className="overview">
-            <div className="overview__nav">
-              <ul className="overview__list">
-                <li
-                  value="0"
-                  onClick={this.onScrollToSession}
-                  className="overview__list-item 
-                 active"
-                >
-                  Overview
-                </li>
-                <li
-                  value="1"
-                  onClick={this.onScrollToSession}
-                  className="overview__list-item"
-                >
-                  Guide
-                </li>
-                <li
-                  value="2"
-                  onClick={this.onScrollToSession}
-                  className="overview__list-item"
-                >
-                  Review
-                </li>
-                <li
-                  value="3"
-                  onClick={this.onScrollToSession}
-                  className="overview__list-item"
-                >
-                  Gallery
-                </li>
-              </ul>
-            </div>
-          </section>
+          <OverviewNav>
+            <OverviewNavListItem
+              value={0}
+              onClick={this.onScrollToSession}
+              title={"Overview"}
+              active
+            />
+            <OverviewNavListItem
+              onClick={this.onScrollToSession}
+              value={1}
+              title={"Guide"}
+            />
+            <OverviewNavListItem
+              onClick={this.onScrollToSession}
+              value={2}
+              title={"Review"}
+            />
+            <OverviewNavListItem
+              onClick={this.onScrollToSession}
+              value={3}
+              title={"Gallery"}
+            />
+          </OverviewNav>
           {/* Overview */}
-          <Overview
-            onRef={ref => (this.overview = ref)}
-            content={overviewText}
-            guide={overviewText}
-            rating={4}
-            comments={comment}
-            totalReviews={100}
-          />
+          <Overview onRef={ref => (this.overview = ref)}>
+            <OverviewContent
+              ref={this.content}
+              text={tripContent && tripContent.overview}
+            />
+            <OverviewGuide
+              ref={this.guide}
+              text={tripContent && tripContent.itinerary}
+            />
+            {/* Review and comments */}
+            <OverviewReview ref={this.review} />
+            <OverviewComment ref={this.comment} />
+            {/* Gallery */}
+            <Gallery images={gallery} ref={this.gallery} />
+          </Overview>
           {/* Booking */}
-
           <Book ref={this.bookForm} style={this.state.bookFormStyle} />
-
-          {/* Gallery */}
-          <Gallery images={gallery} ref={this.gallery} />
         </div>
         <Footer />
       </div>
@@ -321,13 +277,17 @@ export class TripPage extends Component {
   }
 }
 
+const mapStateToProps = state => ({
+  tripContent: state.tripContent
+});
+
 const mapDispatchToProps = {
   actFetchTripContent
 };
 
 export default compose(
   connect(
-    null,
+    mapStateToProps,
     mapDispatchToProps
   ),
   withFadeOnMount
