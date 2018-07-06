@@ -7,3 +7,6 @@ export const CANCEL_FETCH_TRIP = "CANCEL_FETCH_TRIP";
 // Loading
 export const LOADING_START = "LOADING_START";
 export const LOADING_END = "LOADING_END";
+// Modal
+export const OPEN_MODAL = "OPEN_MODAL";
+export const CLOSE_MODAL = "CLOSE_MODAL";

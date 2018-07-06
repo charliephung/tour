@@ -142,10 +142,10 @@ export class HomePage extends Component {
     const { LZNotFound } = this.state;
     return (
       <React.Fragment>
-        <LZNotFound />
-        <LZNotFound />
-        <LZNotFound />
-        <LZNotFound />
+        <LZNotFound loading={loading} />
+        <LZNotFound loading={loading} />
+        <LZNotFound loading={loading} />
+        <LZNotFound loading={loading} />
       </React.Fragment>
     );
   };
