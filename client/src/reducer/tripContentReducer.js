@@ -10,7 +10,7 @@ const tripContentReducer = (state = initialState, actions) => {
         ...actions.payload.trip
       };
     default:
-      return {};
+      return state;
   }
 };
 

@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 // actions
 import { actOpenModal, actCloseModal } from "../../actions/modal";
-import { Modal } from "../modal/Modal";
-import { AuthForm } from "../form/authForm/AuthForm";
+import Modal from "../modal/Modal";
+import AuthForm from "../form/authForm/AuthForm";
 
 const NavBar = ({
   navStyle,
