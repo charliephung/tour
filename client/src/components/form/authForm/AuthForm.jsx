@@ -1,10 +1,14 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { FormContainer } from "./AuthForm.style";
 import { compose } from "redux";
+import GoogleLogin from "react-google-login";
+// Comp
+import { FormContainer, Input, Button } from "./AuthForm.style";
+// Hoc
 import DropTransitionGroup from "../../../HOComponent/DropTransitionGroup";
 // actions
 import { actOpenModal, actCloseModal } from "../../../actions/modal";
+import { actGoogleLogin } from "../../../actions/auth";
 
 export class AuthForm extends Component {
   state = {
@@ -18,12 +22,75 @@ export class AuthForm extends Component {
     });
   };
 
+  onHandleGoogleLogin = result => {
+    this.props.actGoogleLogin({
+      accessToken: result.accessToken,
+      userEmail: result.profileObj.email,
+      username: result.profileObj.name,
+      avatar: result.profileObj.imageUrl
+    });
+  };
+
   render() {
     return (
       <DropTransitionGroup>
         {this.state.showForm && (
           <FormContainer>
-            <h1 onClick={this.onHideFormAndCloseModal}>Hi</h1>
+            <span
+              style={{
+                position: "absolute",
+                top: "1rem",
+                right: "1.5rem",
+                fontSize: "2rem",
+                cursor: "pointer"
+              }}
+              onClick={this.onHideFormAndCloseModal}
+            >
+              X
+            </span>
+            <h1>Login</h1>
+            <Input placeholder="Email" type="email" />
+            <Input placeholder="Password" type="password" />
+            <p>Forgot Password?</p>
+            <Button
+              theme={{
+                display: "block",
+                width: "100%",
+                backgroundColor: "#55c57a"
+              }}
+            >
+              Log in
+            </Button>
+            <hr />
+            <p style={{ textAlign: "center" }} className="paragraph">
+              Or Login with google
+            </p>
+            <GoogleLogin
+              clientId="597937938029-b2lu6sgeorlnido8nj17c043egimammo.apps.googleusercontent.com"
+              buttonText="Login"
+              style={{
+                backgroundColor: "transparent",
+                border: "none",
+                focus: { outline: "none" },
+                marginLeft: "auto",
+                marginRight: "auto",
+                display: "inherit"
+              }}
+              onSuccess={result => {
+                this.onHandleGoogleLogin(result);
+              }}
+              onFailure={() => {}}
+            >
+              <i
+                style={{
+                  color: "#e55f2e",
+                  textAlign: "center",
+                  display: "inherit",
+                  cursor: "pointer"
+                }}
+                className="fab fa-google-plus fa-3x"
+              />
+            </GoogleLogin>
           </FormContainer>
         )}
       </DropTransitionGroup>
@@ -34,7 +101,8 @@ export class AuthForm extends Component {
 const mapStateToProps = state => ({ isModal: state.modal });
 const mapDispatchToProps = {
   actOpenModal,
-  actCloseModal
+  actCloseModal,
+  actGoogleLogin
 };
 
 export default compose(

@@ -4,10 +4,10 @@ const mongoose = require("mongoose");
 const keys = require("./config/keys");
 const bodyParser = require("body-parser");
 const passport = require("passport");
-const cookieSession = require("cookie-session");
 // app config
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
 // app use passport
 app.use(passport.initialize());
 // Init passport

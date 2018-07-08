@@ -1,5 +1,5 @@
-export const AUTH_LOGIN = "AUTH_LOGIN";
-export const AUTH_LOOUT = "AUTH_LOOUT";
+export const SET_USER_TOKEN = "SET_USER_TOKEN";
+export const REMOVE_USER_TOKEN = "REMOVE_USER_TOKEN";
 // Trips
 export const FETCH_TRIP_BY_LOCATION = "FETCH_TRIP_BY_LOCATION";
 export const FETCH_TRIP_BY_ID = "FETCH_TRIP_BY_ID";
