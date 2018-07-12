@@ -4,14 +4,14 @@ const OverviewSubNav = ({
   overviewNavStyle,
   overviewNavListStyle,
   viewingContent,
-  onScrollToSession
+  onScrollToFlag
 }) => {
   return (
     <div className="overview__nav" style={overviewNavStyle}>
       <ul className="overview__list" style={overviewNavListStyle}>
         <li
           value="0"
-          onClick={onScrollToSession}
+          onClick={onScrollToFlag}
           className={`overview__list-item ${viewingContent === "overview" &&
             "active"}`}
         >
@@ -19,7 +19,7 @@ const OverviewSubNav = ({
         </li>
         <li
           value="1"
-          onClick={onScrollToSession}
+          onClick={onScrollToFlag}
           className={`overview__list-item ${viewingContent === "guide" &&
             "active"}`}
         >
@@ -27,7 +27,7 @@ const OverviewSubNav = ({
         </li>
         <li
           value="2"
-          onClick={onScrollToSession}
+          onClick={onScrollToFlag}
           className={`overview__list-item ${viewingContent === "review" &&
             "active"}`}
         >
@@ -35,7 +35,7 @@ const OverviewSubNav = ({
         </li>
         <li
           value="3"
-          onClick={onScrollToSession}
+          onClick={onScrollToFlag}
           className={`overview__list-item ${viewingContent === "gallery" &&
             "active"}`}
         >

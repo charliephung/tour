@@ -2,16 +2,14 @@ import React, { Component } from "react";
 import { showRating } from "../../utils";
 
 export class OverviewReview extends Component {
-  constructor(props) {
-    super(props);
-    this.ref = React.createRef();
-  }
-
   render() {
     const { totalReviews, rating } = this.props;
     return (
       <React.Fragment>
-        <h3 className="heading-3 overview__review__totals" ref={this.ref}>
+        <h3
+          className="heading-3 overview__review__totals"
+          ref={this.props.node}
+        >
           {!totalReviews
             ? "0 review"
             : totalReviews === 1

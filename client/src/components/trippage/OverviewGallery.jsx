@@ -18,15 +18,10 @@ const showImage = images => {
 };
 
 export class OverviewGallery extends Component {
-  constructor(props) {
-    super(props);
-
-    this.ref = React.createRef();
-  }
   render() {
     const { images } = this.props;
     return (
-      <section className="gallery" ref={this.ref}>
+      <section className="gallery" ref={this.props.node}>
         <h3 className="heading-3 ">Gallery</h3>
         {showImage(images)}
       </section>

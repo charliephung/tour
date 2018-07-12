@@ -9,7 +9,7 @@ export const authReducer = (state = initialState, actions) => {
       localStorage.tourJWT = actions.payload.token;
       return jwtDecode(actions.payload.token);
     case REMOVE_USER_TOKEN:
-      localStorage.tourJWT = null;
+      localStorage.removeItem("tourJWT");
       return {};
     default:
       return { ...state };

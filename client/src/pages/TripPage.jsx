@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import * as Scroll from "react-scroll";
+import * as Scroll from "react-scroll/modules";
 // Redux
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -10,10 +10,7 @@ import Header from "../components/header/Header";
 import HeaderImage from "../components/homepage/HeaderImage";
 import Overview from "../components/trippage/Overview";
 import OverviewNav from "../components/trippage/OverviewNav";
-import OverviewNavListItem from "../components/trippage/OverviewNavListItem";
 import OverviewSubNav from "../components/trippage/OverviewSubNav";
-import OverviewContent from "../components/trippage/OverviewContent";
-import OverviewGuide from "../components/trippage/OverviewGuide";
 import OverviewReview from "../components/trippage/OverviewReview";
 import OverviewComment from "../components/trippage/OverviewComment";
 import Gallery from "../components/trippage/OverviewGallery";
@@ -35,6 +32,7 @@ import {
 // actions
 import { actFetchTripContent } from "../actions/trip";
 import isEmpty from "../utils/isEmpty";
+import { Session } from "../components/common/session/Session";
 
 export class TripPage extends Component {
   constructor(props) {
@@ -48,13 +46,9 @@ export class TripPage extends Component {
       },
       tripContent: null
     };
-    this.overview = React.createRef();
-    this.content = React.createRef();
-    this.guide = React.createRef();
-    this.review = React.createRef();
-    this.comment = React.createRef();
+    this.session = React.createRef();
+    this.navBar = React.createRef();
     this.overviewNav = React.createRef();
-    this.gallery = React.createRef();
     this.bookForm = React.createRef();
   }
 
@@ -97,31 +91,8 @@ export class TripPage extends Component {
     });
   };
 
-  onScrollToSession = e => {
-    switch (e.target.value) {
-      case 0:
-        this.onAnimatedScroll(
-          this.overview.getChildrenOffset().OverviewContent.offsetTop - 100
-        );
-        break;
-      case 1:
-        this.onAnimatedScroll(
-          this.overview.getChildrenOffset().OverviewGuide.offsetTop - 100
-        );
-        break;
-      case 2:
-        this.onAnimatedScroll(
-          this.overview.getChildrenOffset().OverviewReview.offsetTop - 100
-        );
-        break;
-      case 3:
-        this.onAnimatedScroll(
-          this.overview.getChildrenOffset().OverviewGallery.offsetTop - 100
-        );
-        break;
-      default:
-        break;
-    }
+  onScrollToFlag = flagIndex => {
+    this.session.scrollToFlag(flagIndex, 45);
   };
 
   // onViewContent = () => {
@@ -143,10 +114,9 @@ export class TripPage extends Component {
   // };
 
   onSetOverviewNavBar = () => {
-    // console.log(this.overview.getChildrenPosition().OverviewContent.top - 60);
-
-    const overviewNavOffSetTop =
-      this.overview.getChildrenPosition().OverviewContent.top - 60;
+    const navbarheight = this.navBar.current.wrappedInstance.refs.node
+      .offsetHeight;
+    const overviewNavOffSetTop = this.session.getFlagsPosition()[0].top - 100;
     // Check if nav is out if wp
     this.onToggleStyle(
       overviewNavOffSetTop,
@@ -214,14 +184,30 @@ export class TripPage extends Component {
     return (
       <div className="container">
         {/* Navbar */}
-        <NavBar navStyle={NavBarStyles} navListStyle={NavBarListStyles} />
+        <NavBar
+          ref={this.navBar}
+          navStyle={NavBarStyles}
+          navListStyle={NavBarListStyles}
+        />
         {/* Sub nav */}
-        <OverviewSubNav
+        {/* <OverviewSubNav
           viewingContent={this.state.viewingContent.view}
           overviewNavStyle={this.state.overviewNavStyle}
           overviewNavListStyle={this.state.overviewNavListStyle}
-          onScrollToSession={this.onScrollToSession}
-        />
+          onScrollToFlag={this.onScrollToFlag}
+        /> */}
+        <OverviewNav
+          style={{
+            position: "fixed"
+          }}
+          active={0}
+          onClick={this.onScrollToFlag}
+        >
+          <OverviewNav.Item>Overview</OverviewNav.Item>
+          <OverviewNav.Item>Guide</OverviewNav.Item>
+          <OverviewNav.Item>Review</OverviewNav.Item>
+          <OverviewNav.Item>Gallery</OverviewNav.Item>
+        </OverviewNav>
         {/* Header */}
         <Header heading={title} button={false}>
           {() => <HeaderImage active={true} imageUrl={headerImageUrl} />}
@@ -229,44 +215,35 @@ export class TripPage extends Component {
         {/* Content */}
         <div className="sub-container">
           {/* Overview  nav*/}
-          <OverviewNav>
-            <OverviewNavListItem
-              value={0}
-              onClick={this.onScrollToSession}
-              title={"Overview"}
-              active
-            />
-            <OverviewNavListItem
-              onClick={this.onScrollToSession}
-              value={1}
-              title={"Guide"}
-            />
-            <OverviewNavListItem
-              onClick={this.onScrollToSession}
-              value={2}
-              title={"Review"}
-            />
-            <OverviewNavListItem
-              onClick={this.onScrollToSession}
-              value={3}
-              title={"Gallery"}
-            />
+          <OverviewNav active={0} onClick={this.onScrollToFlag}>
+            <OverviewNav.Item>Overview</OverviewNav.Item>
+            <OverviewNav.Item>Guide</OverviewNav.Item>
+            <OverviewNav.Item>Review</OverviewNav.Item>
+            <OverviewNav.Item>Gallery</OverviewNav.Item>
           </OverviewNav>
           {/* Overview */}
-          <Overview onRef={ref => (this.overview = ref)}>
-            <OverviewContent
-              ref={this.content}
-              text={tripContent && tripContent.overview}
-            />
-            <OverviewGuide
-              ref={this.guide}
-              text={tripContent && tripContent.itinerary}
-            />
-            {/* Review and comments */}
-            <OverviewReview ref={this.review} />
-            <OverviewComment ref={this.comment} />
-            {/* Gallery */}
-            <Gallery images={gallery} ref={this.gallery} />
+          <Overview>
+            <Session onRef={ref => (this.session = ref)}>
+              <Session.Flag displayName="0" />
+              {/* Overview main text */}
+              <Overview.Content
+                title="Overview"
+                text={tripContent && tripContent.overview}
+              />
+              <Session.Flag displayName="1" />
+              {/* Guide */}
+              <Overview.Content
+                title="Guide"
+                text={tripContent && tripContent.itinerary}
+              />
+              {/* Review and comments */}
+              <Session.Flag displayName="2" />
+              <OverviewReview />
+              <Session.Flag displayName="3" />
+              <OverviewComment />
+              {/* Gallery */}
+              <Gallery images={gallery} />
+            </Session>
           </Overview>
           {/* Booking */}
           <Book ref={this.bookForm} style={this.state.bookFormStyle} />

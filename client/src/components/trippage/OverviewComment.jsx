@@ -2,17 +2,11 @@ import React, { Component } from "react";
 import { textToParagraph } from "../../utils";
 
 export class OverviewComment extends Component {
-  constructor(props) {
-    super(props);
-
-    this.ref = React.createRef();
-  }
-
   render() {
     const { userImageUrl, username, date, text } = this.props;
     if (!text) {
       return (
-        <div className="comments" ref={this.ref}>
+        <div className="comments" ref={this.props.node}>
           <div className="comments__bot">
             <div className="comments__user__text">No Comment yet</div>
             <br />
@@ -23,7 +17,7 @@ export class OverviewComment extends Component {
     }
     return (
       <React.Fragment>
-        <div className="comments" ref={this.ref}>
+        <div className="comments" ref={this.props.node}>
           <div className="comments__top">
             <figure className="comments__user__avatar">
               <img src={userImageUrl} alt={username} />
