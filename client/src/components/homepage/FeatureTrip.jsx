@@ -1,14 +1,16 @@
 import React from "react";
 import { showRating } from "../../utils";
 
-const FeatureTrip = ({
-  headerImageUrl,
-  title,
-  pricePerDay,
-  pricePerPerson,
-  rating,
-  reviews
-}) => {
+const FeatureTrip = props => {
+  const {
+    headerImageUrl,
+    title,
+    pricePerDay,
+    pricePerPerson,
+    rating,
+    reviews
+  } = props.trip;
+
   return (
     <div className="feature-trip__card">
       <img src={headerImageUrl} alt={title} />

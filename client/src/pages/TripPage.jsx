@@ -1,23 +1,10 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import * as Scroll from "react-scroll/modules";
+import { Link } from "react-router-dom";
 // Redux
 import { compose } from "redux";
 import { connect } from "react-redux";
-// Comp
-import NavBar from "../components/navbar/NavBar";
-import Header from "../components/header/Header";
-import HeaderImage from "../components/homepage/HeaderImage";
-import Overview from "../components/trippage/Overview";
-import OverviewNav from "../components/trippage/OverviewNav";
-import OverviewSubNav from "../components/trippage/OverviewSubNav";
-import OverviewReview from "../components/trippage/OverviewReview";
-import OverviewComment from "../components/trippage/OverviewComment";
-import Gallery from "../components/trippage/OverviewGallery";
-import Book from "../components/trippage/Book";
-import Footer from "../components/footer/Footer";
-// HOC
-import withFadeOnMount from "../HOComponent/fadeOnMount";
 // CSS
 import {
   overviewNavPreStyle,
@@ -31,8 +18,25 @@ import {
 } from "./css/tripPageStyle";
 // actions
 import { actFetchTripContent } from "../actions/trip";
+// utils
 import isEmpty from "../utils/isEmpty";
-import { Session } from "../components/common/session/Session";
+import { color } from "../theme/color";
+// HOC
+import withFadeOnMount from "../HOComponent/fadeOnMount";
+// Comp
+import Header from "../components/header/Header";
+import HeaderImage from "../components/homepage/HeaderImage";
+import Overview from "../components/trippage/Overview";
+import OverviewNav from "../components/trippage/OverviewNav";
+import OverviewSubNav from "../components/trippage/OverviewSubNav";
+import OverviewReview from "../components/trippage/OverviewReview";
+import OverviewComment from "../components/trippage/OverviewComment";
+import Gallery from "../components/trippage/OverviewGallery";
+import Book from "../components/trippage/Book";
+import Footer from "../components/footer/Footer";
+import Section from "../components/common/section/Section";
+import OverviewFixedNavbar from "../components/trippage/overviewNavbar/OverviewFixedNavbar";
+import Navbar from "../components/navbar/Navbar";
 
 export class TripPage extends Component {
   constructor(props) {
@@ -46,7 +50,7 @@ export class TripPage extends Component {
       },
       tripContent: null
     };
-    this.session = React.createRef();
+    this.section = React.createRef();
     this.navBar = React.createRef();
     this.overviewNav = React.createRef();
     this.bookForm = React.createRef();
@@ -92,7 +96,7 @@ export class TripPage extends Component {
   };
 
   onScrollToFlag = flagIndex => {
-    this.session.scrollToFlag(flagIndex, 45);
+    this.section.scrollToFlag(flagIndex, 45);
   };
 
   // onViewContent = () => {
@@ -103,7 +107,7 @@ export class TripPage extends Component {
   //     gallery: this.gallery.current.props.getDOMRect("gallery").top
   //   };
   //   const index = indexOfMin(Object.values(viewingContent), { absolute: true });
-  //   // Only update when goto new session
+  //   // Only update when goto new section
   //   if (Object.keys(viewingContent)[index] !== this.state.viewingContent.view) {
   //     this.setState({
   //       viewingContent: {
@@ -114,22 +118,22 @@ export class TripPage extends Component {
   // };
 
   onSetOverviewNavBar = () => {
-    const navbarheight = this.navBar.current.wrappedInstance.refs.node
-      .offsetHeight;
-    const overviewNavOffSetTop = this.session.getFlagsPosition()[0].top - 100;
-    // Check if nav is out if wp
-    this.onToggleStyle(
-      overviewNavOffSetTop,
-      "overviewNavStyle",
-      overviewNavStyle,
-      overviewNavPreStyle
-    );
-    this.onToggleStyle(
-      overviewNavOffSetTop,
-      "overviewNavListStyle",
-      overviewNavListStyle,
-      overviewNavListStyle
-    );
+    // const navbarheight = this.navBar.current.wrappedInstance.refs.node
+    //   .offsetHeight;
+    // const overviewNavOffSetTop = this.section.getFlagsPosition()[0].top - 100;
+    // // Check if nav is out if wp
+    // this.onToggleStyle(
+    //   overviewNavOffSetTop,
+    //   "overviewNavStyle",
+    //   overviewNavStyle,
+    //   overviewNavPreStyle
+    // );
+    // this.onToggleStyle(
+    //   overviewNavOffSetTop,
+    //   "overviewNavListStyle",
+    //   overviewNavListStyle,
+    //   overviewNavListStyle
+    // );
     // // Check if viewport width is lower than 1100
     // if (
     //   Math.max(document.documentElement.clientWidth, window.innerWidth || 0) <=
@@ -183,31 +187,27 @@ export class TripPage extends Component {
 
     return (
       <div className="container">
-        {/* Navbar */}
-        <NavBar
-          ref={this.navBar}
-          navStyle={NavBarStyles}
-          navListStyle={NavBarListStyles}
-        />
-        {/* Sub nav */}
-        {/* <OverviewSubNav
-          viewingContent={this.state.viewingContent.view}
-          overviewNavStyle={this.state.overviewNavStyle}
-          overviewNavListStyle={this.state.overviewNavListStyle}
-          onScrollToFlag={this.onScrollToFlag}
-        /> */}
-        <OverviewNav
-          style={{
-            position: "fixed"
+        <Navbar
+          theme={{
+            borderBottom: `1px solid ${color.grey}`,
+            bgHoverColor: color.lightGrey
           }}
-          active={0}
-          onClick={this.onScrollToFlag}
+          auth={this.props.auth}
         >
-          <OverviewNav.Item>Overview</OverviewNav.Item>
-          <OverviewNav.Item>Guide</OverviewNav.Item>
-          <OverviewNav.Item>Review</OverviewNav.Item>
-          <OverviewNav.Item>Gallery</OverviewNav.Item>
-        </OverviewNav>
+          <Navbar.List>
+            <Navbar.Item>
+              <Link to="/">
+                <h3>Tour</h3>
+              </Link>
+            </Navbar.Item>
+          </Navbar.List>
+          <Navbar.List style={{ marginLeft: "auto" }}>
+            <Navbar.AuthNav />
+          </Navbar.List>
+        </Navbar>
+        {/* Sub nav */}
+
+        <OverviewFixedNavbar />
         {/* Header */}
         <Header heading={title} button={false}>
           {() => <HeaderImage active={true} imageUrl={headerImageUrl} />}
@@ -223,27 +223,27 @@ export class TripPage extends Component {
           </OverviewNav>
           {/* Overview */}
           <Overview>
-            <Session onRef={ref => (this.session = ref)}>
-              <Session.Flag displayName="0" />
+            <Section onRef={ref => (this.section = ref)}>
+              <Section.Flag displayName="0" />
               {/* Overview main text */}
               <Overview.Content
                 title="Overview"
                 text={tripContent && tripContent.overview}
               />
-              <Session.Flag displayName="1" />
+              <Section.Flag displayName="1" />
               {/* Guide */}
               <Overview.Content
                 title="Guide"
                 text={tripContent && tripContent.itinerary}
               />
               {/* Review and comments */}
-              <Session.Flag displayName="2" />
+              <Section.Flag displayName="2" />
               <OverviewReview />
-              <Session.Flag displayName="3" />
+              <Section.Flag displayName="3" />
               <OverviewComment />
               {/* Gallery */}
               <Gallery images={gallery} />
-            </Session>
+            </Section>
           </Overview>
           {/* Booking */}
           <Book ref={this.bookForm} style={this.state.bookFormStyle} />
@@ -255,7 +255,8 @@ export class TripPage extends Component {
 }
 
 const mapStateToProps = state => ({
-  tripContent: state.tripContent
+  tripContent: state.tripContent,
+  auth: state.auth
 });
 
 const mapDispatchToProps = {

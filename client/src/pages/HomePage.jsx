@@ -2,20 +2,21 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { compose } from "redux";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
+// Actions
+import { actFetchTrips } from "../actions/trip";
+import { actLoadingStart, actLoadingEnd } from "../actions/async";
+// Ulti
+import isEmpty from "../utils/isEmpty";
+import { color } from "../theme/color";
 // Component
-import NavBar from "../components/navbar/NavBar";
 import FeatureCard from "../components/homepage/FeatureCard";
 import Header from "../components/header/Header";
 import Footer from "../components/footer/Footer";
 import HeaderImage from "../components/homepage/HeaderImage";
-import { Link } from "react-router-dom";
-import "../HOComponent/fade.css";
+import Navbar from "../components/navbar/Navbar";
 import withFadeOnMout from "../HOComponent/fadeOnMount";
-// Actions
-import { actFetchTrip } from "../actions/trip";
-import { actLoadingStart, actLoadingEnd } from "../actions/async";
-// Ulti
-import isEmpty from "../utils/isEmpty";
+import FeatureTrip from "../components/homepage/FeatureTrip";
 
 // feature card
 const cardContent = [
@@ -78,30 +79,30 @@ const tripNav = [
 
 export class HomePage extends Component {
   static propTypes = {
-    actFetchTrip: PropTypes.func.isRequired
+    actFetchTrips: PropTypes.func.isRequired
   };
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      activeLink: 0,
-      headerImage: 0,
-      LZfeatureTrips: null,
-      LZNotFound: null,
-      trips: null
-    };
-  }
+  state = {
+    activeLink: 0,
+    headerImage: 0
+  };
 
   onChangeFeatureTrip = e => {
     this.onChangeLink(e);
+    const { value } = e.target;
     // Check if trips are already fetched
-    const index = this.state.trips.findIndex(
-      ele => ele.location === lookupLocation[e.target.value]
+    const index = this.props.trips.findIndex(
+      ele => ele.location === lookupLocation[value]
     );
     // fetched data when not found
-    index === -1 && this.props.actFetchTrip(lookupLocation[e.target.value]);
+    index === -1 && this.props.actFetchTrips(lookupLocation[value]);
   };
+
+  shouldComponentUpdate(nextProps) {
+    if (nextProps.trips.length !== 0) {
+      if (nextProps.trips === this.state.trips) return false;
+    }
+    return true;
+  }
 
   onChangeLink = e => {
     const { value } = e.target;
@@ -112,79 +113,65 @@ export class HomePage extends Component {
     });
   };
 
-  async shouldComponentUpdate(nextProps) {
-    // Check if cmp should update
-    if (this.state.trips !== nextProps.trips) {
-      if (this.state.LZfeatureTrips === null) {
-        // Load feature trip cmp when need
-        const {
-          default: FeatureTrip
-        } = await import("../components/homepage/FeatureTrip");
-        const {
-          default: FeatureTripNotFound
-        } = await import("../components/homepage/FeatureTripNotFound");
-        this.setState({
-          LZfeatureTrips: FeatureTrip,
-          trips: nextProps.trips,
-          LZNotFound: FeatureTripNotFound
-        });
-      } else this.setState({ trips: nextProps.trips });
-    }
-    return false;
-  }
-
   componentDidMount() {
     // Fetch init data
-    this.props.actFetchTrip("sai gon");
+    this.props.actFetchTrips("sai gon");
   }
 
-  renderNotFoundCard = loading => {
-    const { LZNotFound } = this.state;
-    return (
-      <React.Fragment>
-        <LZNotFound loading={loading} />
-        <LZNotFound loading={loading} />
-        <LZNotFound loading={loading} />
-        <LZNotFound loading={loading} />
-      </React.Fragment>
-    );
-  };
-
   render() {
-    let featureTripContent = null;
-    // Check to see trips in active link is loaded
-    if (!isEmpty(this.state.trips)) {
-      const { activeLink, trips, LZfeatureTrips } = this.state;
-      if (!trips[activeLink]) {
-        // If trips has not loaded set loading card
-        featureTripContent = this.renderNotFoundCard({ loading: true });
-      } else {
-        if (trips[activeLink].trips.length === 0) {
-          // If has 0 trips set comming soon card
+    let tripContent = null;
+    const { trips, loading } = this.props;
+    const { activeLink } = this.state;
 
-          featureTripContent = this.renderNotFoundCard({ loading: false });
-        } else {
-          // Populate the trips in the active link
-          featureTripContent = trips[activeLink].trips.map((ele, index) => (
-            <Link key={index} to={"trip/" + ele.title + "/" + ele._id}>
-              <LZfeatureTrips
-                headerImageUrl={ele.headerImageUrl}
-                title={ele.title}
-                pricePerDay={ele.pricePerDay}
-                pricePerPerson={ele.pricePerPerson}
-                rating={ele.rating}
-                reviews={ele.reviews}
-              />
-            </Link>
-          ));
-        }
-      }
+    if (loading && trips.length === 0) {
+      tripContent = <h1>Loading</h1>;
+    }
+    if (!loading && trips[activeLink].trips.length === 0) {
+      tripContent = <h1>Not Found</h1>;
+    }
+    if (!loading && trips[activeLink].trips.length !== 0) {
+      tripContent = trips[activeLink].trips.map((ele, index) => {
+        return <FeatureTrip key={index} trip={ele} />;
+      });
     }
 
+    // if (this.state.trips === null) tripContent = <h1>loading</h1>;
+    // if (this.state.trips && this.state.trips.length === 0)
+    //   tripContent = <h1>NotFound</h1>;
+    // if (this.state.trips && this.state.trips.length !== 0) {
+    //   if (this.state.trips[this.state.activeLink].trips.length === 0) {
+    //     tripContent = <h1>NotFound</h1>;
+    //   } else {
+    //     const tripsInLocation = this.state.trips[this.state.activeLink];
+    //     tripContent = tripsInLocation.trips.map((ele, index) => {
+    //       return <FeatureTrip key={index} trip={ele} />;
+    //     });
+    //   }
+    // }
+
+    const { auth } = this.props;
     return (
       <div className="container">
         {/* Nav */}
-        <NavBar />
+
+        <Navbar
+          theme={{
+            borderBottom: `1px solid ${color.grey}`,
+            bgHoverColor: color.lightGrey
+          }}
+          auth={auth}
+        >
+          <Navbar.List>
+            <Navbar.Item>
+              <Link to="/">
+                <h3>Tour</h3>
+              </Link>
+            </Navbar.Item>
+          </Navbar.List>
+          <Navbar.List style={{ marginLeft: "auto" }}>
+            <Navbar.AuthNav />
+          </Navbar.List>
+        </Navbar>
         {/* Header */}
         <Header headerImage={headerImage}>
           {(imageArr, activeIndex) =>
@@ -230,7 +217,7 @@ export class HomePage extends Component {
               ))}
             </ul>
           </nav>
-          {featureTripContent}
+          {tripContent}
         </section>
         <Footer />
       </div>
@@ -240,11 +227,12 @@ export class HomePage extends Component {
 
 const mapStateToProps = state => ({
   trips: state.trips,
-  loading: state.loading
+  loading: state.loading.fetchTripsIsLoading,
+  auth: state.auth
 });
 
 const mapDispatchToProps = {
-  actFetchTrip,
+  actFetchTrips,
   actLoadingStart,
   actLoadingEnd
 };

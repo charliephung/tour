@@ -14,7 +14,7 @@ const onAnimatedScroll = (offsetHeight, duration = 500) => {
   });
 };
 
-export class Session extends Component {
+export class Section extends Component {
   static Flag = Flag;
   flagsNode = {};
 
@@ -86,4 +86,4 @@ export class Session extends Component {
   }
 }
 
-export default Session;
+export default Section;
