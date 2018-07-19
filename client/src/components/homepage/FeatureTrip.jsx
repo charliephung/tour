@@ -13,7 +13,13 @@ const FeatureTrip = props => {
   } = props.trip;
 
   return (
-    <Card>
+    <Card
+      theme={{
+        hover: {
+          transform: "scale(1.1)"
+        }
+      }}
+    >
       <div
         style={{
           backgroundPosition: "center",
@@ -22,7 +28,6 @@ const FeatureTrip = props => {
           backgroundImage: `url(${headerImageUrl})`
         }}
       />
-      {/* <img style={{ height: "400px",  }} src={headerImageUrl} alt={title} /> */}
       <h4>{title}</h4>
       <p>From {pricePerDay + pricePerPerson}$</p>
       <div

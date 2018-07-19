@@ -19,7 +19,7 @@ const showImage = images => {
 
 const OverviewGallery = ({ images }) => {
   return (
-    <section style={{ fontSize: "1.6rem" }}>
+    <section style={{ fontSize: "1.6rem", padding: "2rem 0" }}>
       <h3 style={{ fontSize: "2.5rem" }}>Gallery</h3>
       {showImage(images)}
     </section>

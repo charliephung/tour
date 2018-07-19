@@ -111,6 +111,7 @@ export class HomePage extends Component {
   };
 
   componentDidMount() {
+    window.scrollTo(0, 0);
     // Fetch init data
     if (this.props.trips.length === 0) {
       this.props.actFetchTrips("sai gon");

@@ -7,6 +7,7 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 // actions
 import { actFetchTripContent } from "../actions/trip";
+import { uiReducer } from "./tripReducer";
 // utils
 import isEmpty from "../utils/isEmpty";
 import { color } from "../theme/color";
@@ -31,14 +32,17 @@ export class TripPage extends Component {
       viewingContent: {
         view: "overview"
       },
-      fixedLayout: false,
-      fixedBook: false,
+      ui: {
+        fixedLayout: false,
+        fixedBook: false
+      },
       tripContent: null
     };
     this.section = React.createRef();
   }
 
   componentDidMount() {
+    window.scrollTo(0, 0);
     if (this.props.tripContent) {
       if (this.props.tripContent._id !== this.props.match.params.tripId)
         this.props.actFetchTripContent(this.props.match.params.tripId);
@@ -66,41 +70,20 @@ export class TripPage extends Component {
   onShowSubNavBar = () => {
     const { overview } = this.section.getFlagsPosition();
     const { mainNav } = this.section.getFlagsOffSet();
-    const { fixedLayout, fixedBook } = this.state;
-    if (window.innerWidth < 1000) {
-      if (fixedBook === true) {
-        this.setState({ fixedBook: false });
-      }
-      if (
-        overview.top - mainNav.offsetHeight - 60 < 0 &&
-        fixedLayout === false
-      ) {
-        this.setState({ fixedLayout: true });
-      }
-      if (
-        overview.top - mainNav.offsetHeight - 60 > 0 &&
-        fixedLayout === true
-      ) {
-        this.setState({ fixedLayout: false });
-      }
-    } else if (window.innerWidth > 1000) {
-      if (
-        overview.top - mainNav.offsetHeight - 60 < 0 &&
-        fixedLayout === false
-      ) {
-        this.setState({ fixedLayout: true, fixedBook: true });
-      }
-      if (
-        overview.top - mainNav.offsetHeight - 60 > 0 &&
-        fixedLayout === true
-      ) {
-        this.setState({ fixedLayout: false, fixedBook: false });
-      }
+    const { fixedLayout, fixedBook } = this.state.ui;
+    const changes = uiReducer(this.state.ui, {
+      windowWidth: window.innerWidth,
+      uiPosition: overview.top - mainNav.offsetHeight - 60,
+      fixedBook,
+      fixedLayout
+    });
+    if (JSON.stringify(changes) !== JSON.stringify(this.state.ui)) {
+      this.setState({ ui: changes });
     }
   };
 
   render() {
-    const { fixedLayout, fixedBook } = this.state;
+    const { fixedLayout, fixedBook } = this.state.ui;
 
     const {
       headerImageUrl,
@@ -232,9 +215,13 @@ export class TripPage extends Component {
                     />
                     {/* Review and comments */}
                     <Section.Flag flagName="2" />
-                    <Overview.Review />
+                    <Overview.Review
+                      rating={rating === undefined ? [] : rating}
+                    />
                     <Section.Flag flagName="3" />
-                    <Overview.Comment />
+                    <h3 style={{ fontSize: "2.5rem" }}>Comment</h3>
+
+                    <Overview.Comment comments={reviews} />
                     {/* Gallery */}
                     <Gallery images={gallery} />
                   </Overview>

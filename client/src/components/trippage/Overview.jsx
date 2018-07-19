@@ -4,8 +4,7 @@ import { textToParagraph, showRating } from "../../utils";
 const UserComment = ({ userImageUrl, username, date, text }) => {
   if (!text) {
     return (
-      <div style={{ padding: "2rem 0", fontSize: "1.6rem" }}>
-        <h3 style={{ fontSize: "2.5rem" }}>Comment </h3>
+      <div style={{ fontSize: "1.6rem" }}>
         <p>No comment yet</p>
       </div>
     );
@@ -39,14 +38,14 @@ const Content = props => (
   </div>
 );
 
-const Review = ({ totalReviews, rating }) => {
+const Review = ({ rating }) => {
   return (
     <div style={{ padding: "2rem 0" }}>
       <h3 style={{ fontSize: "2.5rem" }}>Review</h3>
       <div style={{ display: "flex", fontSize: "2rem" }}>
-        <ul style={{ display: "flex" }}>{showRating(rating)}</ul>
+        <ul style={{ display: "flex" }}>{showRating(rating.length)}</ul>
         <span style={{ padding: "0 .5rem" }}>
-          {!rating ? "No rating yet" : rating}
+          {!rating ? "No rating yet" : rating.length}
         </span>
       </div>
     </div>
