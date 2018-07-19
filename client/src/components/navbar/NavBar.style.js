@@ -1,12 +1,22 @@
 import styled from "styled-components";
+import { Flex } from "../../theme/style";
 
 export const FixedNavbar = styled.div`
   width: 100%;
-  background-color: #fff;
-  position: fixed;
+  position: ${props => props.theme.position};
   top: ${props => props.theme.top};
   color: ${props => props.theme.color};
-  z-index: 900;
+  z-index: ${props => props.theme.zIndex};
+  border-bottom: ${props => props.theme.borderBottom};
+`;
+
+export const Nav = styled.div`
+  width: 100%;
+  background-color: #fff;
+  position: ${props => props.theme.position};
+  top: ${props => props.theme.top};
+  color: ${props => props.theme.color};
+  z-index: ${props => props.theme.zIndex};
   border-bottom: ${props => props.theme.borderBottom};
 `;
 
@@ -17,18 +27,19 @@ export const NavList = styled.ul`
 
 export const NavListItem = styled.li`
   cursor: pointer;
-  font-size: 1.6rem;
-  padding: 0.8rem 3rem;
+  font-size: ${props => (props.theme.fontSize ? props.theme.fontSize : "2rem")};
+  padding: 1rem 3rem;
   position: relative;
   &::before {
     content: "";
     position: absolute;
     top: 80%;
     left: 50%;
-    width: 0%;
+    width: ${props =>
+      props.theme.beforeWidth ? props.theme.beforeWidth : "0%"};
     transform: translateX(-50%);
     height: 2px;
-    background-color: ${props => props.theme.bgColor};
+    background-color: ${props => props.theme.ItemBgColor};
     transition: all 0.2s;
   }
 
@@ -37,5 +48,6 @@ export const NavListItem = styled.li`
   }
   &:hover {
     background-color: ${props => props.theme.bgHoverColor};
+    color: ${props => props.theme.hoverColor};
   }
 `;

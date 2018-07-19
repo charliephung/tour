@@ -3,12 +3,12 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import GoogleLogin from "react-google-login";
 // Comp
-import { FormContainer, Input, Button } from "./AuthForm.style";
+import { FormContainer, Input } from "./AuthForm.style";
+import { Button } from "../../../theme/style";
+import { color } from "../../../theme/color";
 // Hoc
 import DropTransitionGroup from "../../../HOComponent/DropTransitionGroup";
 // actions
-import { actOpenModal, actCloseModal } from "../../../actions/modal";
-import { actGoogleLogin } from "../../../actions/auth";
 
 export class AuthForm extends Component {
   state = {
@@ -22,7 +22,7 @@ export class AuthForm extends Component {
     });
   };
 
-  onHandleGoogleLogin = result => {
+  handleSubmitResult = result => {
     this.props.actGoogleLogin({
       accessToken: result.accessToken,
       userEmail: result.profileObj.email,
@@ -56,7 +56,7 @@ export class AuthForm extends Component {
               theme={{
                 display: "block",
                 width: "100%",
-                backgroundColor: "#55c57a"
+                bgColor: color.green
               }}
             >
               Log in
@@ -77,7 +77,7 @@ export class AuthForm extends Component {
                 display: "inherit"
               }}
               onSuccess={result => {
-                this.onHandleGoogleLogin(result);
+                this.handleSubmitResult(result);
               }}
               onFailure={() => {}}
             >
@@ -99,15 +99,10 @@ export class AuthForm extends Component {
 }
 
 const mapStateToProps = state => ({ isModal: state.modal });
-const mapDispatchToProps = {
-  actOpenModal,
-  actCloseModal,
-  actGoogleLogin
-};
 
 export default compose(
   connect(
     mapStateToProps,
-    mapDispatchToProps
+    null
   )
 )(AuthForm);

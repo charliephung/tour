@@ -9,7 +9,7 @@ export const textToParagraph = text => {
   paragraphs = paragraphs.filter(ele => ele.length > 0);
 
   result = paragraphs.map((ele, index) => (
-    <p key={index} className="paragraph">
+    <p key={index} style={{ paddingBottom: "1rem" }}>
       {ele}
     </p>
   ));
@@ -21,7 +21,7 @@ export const showRating = rating => {
   let result = [];
   for (let i = 0; i < 5; i++) {
     result.push(
-      <li key={i} className="star__icon">
+      <li key={i}>
         <i className="far fa-star" />
       </li>
     );
@@ -29,7 +29,7 @@ export const showRating = rating => {
 
   for (let i = 0; i < rating; i++) {
     result[i] = (
-      <li key={i} className="star__icon">
+      <li key={i}>
         <i className="fas fa-star" />
       </li>
     );

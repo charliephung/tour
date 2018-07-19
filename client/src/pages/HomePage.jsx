@@ -11,12 +11,13 @@ import isEmpty from "../utils/isEmpty";
 import { color } from "../theme/color";
 // Component
 import FeatureCard from "../components/homepage/FeatureCard";
+import NotFoundCard from "../components/homepage/FeatureTripNotFound";
 import Header from "../components/header/Header";
 import Footer from "../components/footer/Footer";
-import HeaderImage from "../components/homepage/HeaderImage";
 import Navbar from "../components/navbar/Navbar";
 import withFadeOnMout from "../HOComponent/fadeOnMount";
 import FeatureTrip from "../components/homepage/FeatureTrip";
+import { Button, Container, Col, Row, Text } from "../theme/style";
 
 // feature card
 const cardContent = [
@@ -60,9 +61,9 @@ const headerImage = [
   }
 ];
 const lookupLocation = {
-  0: "sai gon",
-  1: "da lat",
-  2: "ha noi"
+  "sai gon": "sai gon",
+  "da lat": "da lat",
+  "ha noi": "ha noi"
 };
 // Trip nav
 const tripNav = [
@@ -82,21 +83,18 @@ export class HomePage extends Component {
     actFetchTrips: PropTypes.func.isRequired
   };
   state = {
-    activeLink: 0,
+    activeLink: "sai gon",
     headerImage: 0
   };
 
   onChangeFeatureTrip = e => {
     this.onChangeLink(e);
-    const { value } = e.target;
     // Check if trips are already fetched
-    const index = this.props.trips.findIndex(
-      ele => ele.location === lookupLocation[value]
-    );
-    // fetched data when not found
-    index === -1 && this.props.actFetchTrips(lookupLocation[value]);
-  };
+    const index = this.props.trips.findIndex(ele => ele.location === e);
 
+    // fetched data when not found
+    index === -1 && this.props.actFetchTrips(e);
+  };
   shouldComponentUpdate(nextProps) {
     if (nextProps.trips.length !== 0) {
       if (nextProps.trips === this.state.trips) return false;
@@ -105,59 +103,58 @@ export class HomePage extends Component {
   }
 
   onChangeLink = e => {
-    const { value } = e.target;
     this.setState(state => {
-      if (state.activeLink !== value) {
-        return { activeLink: value };
+      if (state.activeLink !== e) {
+        return { activeLink: e };
       }
     });
   };
 
   componentDidMount() {
     // Fetch init data
-    this.props.actFetchTrips("sai gon");
+    if (this.props.trips.length === 0) {
+      this.props.actFetchTrips("sai gon");
+    }
   }
 
+  renderCard = loading => (
+    <React.Fragment>
+      <NotFoundCard loading={loading} />
+      <NotFoundCard loading={loading} />
+      <NotFoundCard loading={loading} />
+      <NotFoundCard loading={loading} />
+    </React.Fragment>
+  );
+
   render() {
-    let tripContent = null;
+    let tripContent = this.renderCard(true);
     const { trips, loading } = this.props;
     const { activeLink } = this.state;
-
-    if (loading && trips.length === 0) {
-      tripContent = <h1>Loading</h1>;
+    const tripIndex = trips.findIndex(trip => trip.location === activeLink);
+    if (!loading && trips[tripIndex].trips.length === 0) {
+      tripContent = this.renderCard();
     }
-    if (!loading && trips[activeLink].trips.length === 0) {
-      tripContent = <h1>Not Found</h1>;
-    }
-    if (!loading && trips[activeLink].trips.length !== 0) {
-      tripContent = trips[activeLink].trips.map((ele, index) => {
-        return <FeatureTrip key={index} trip={ele} />;
+    if (!loading && trips[tripIndex].trips.length !== 0) {
+      tripContent = trips[tripIndex].trips.map((ele, index) => {
+        return (
+          <Link key={index} to={`trip/${ele.title}/${ele._id}`}>
+            <FeatureTrip trip={ele} />
+          </Link>
+        );
       });
     }
 
-    // if (this.state.trips === null) tripContent = <h1>loading</h1>;
-    // if (this.state.trips && this.state.trips.length === 0)
-    //   tripContent = <h1>NotFound</h1>;
-    // if (this.state.trips && this.state.trips.length !== 0) {
-    //   if (this.state.trips[this.state.activeLink].trips.length === 0) {
-    //     tripContent = <h1>NotFound</h1>;
-    //   } else {
-    //     const tripsInLocation = this.state.trips[this.state.activeLink];
-    //     tripContent = tripsInLocation.trips.map((ele, index) => {
-    //       return <FeatureTrip key={index} trip={ele} />;
-    //     });
-    //   }
-    // }
-
     const { auth } = this.props;
     return (
-      <div className="container">
+      <React.Fragment>
         {/* Nav */}
-
         <Navbar
           theme={{
             borderBottom: `1px solid ${color.grey}`,
-            bgHoverColor: color.lightGrey
+            bgHoverColor: color.veryLightGrey,
+            position: "fixed",
+            zIndex: "900",
+            display: "flex"
           }}
           auth={auth}
         >
@@ -173,19 +170,35 @@ export class HomePage extends Component {
           </Navbar.List>
         </Navbar>
         {/* Header */}
-        <Header headerImage={headerImage}>
-          {(imageArr, activeIndex) =>
+        <Header
+          headerImage={headerImage}
+          renderImage={(imageArr, activeIndex) =>
             imageArr.map((ele, index) => (
-              <HeaderImage
+              <Header.Image
                 key={index}
                 active={activeIndex === index}
                 imageUrl={ele.imageUrl}
               />
             ))
           }
+        >
+          <Header.Heading>Experience in VietNam</Header.Heading>
+          <Button theme={{ bgColor: color.orange, width: "20%" }}>
+            Show more
+          </Button>
         </Header>
         {/* Card F */}
-        <section className="feature">
+        <br />
+        <br />
+        <br />
+        <br />
+        <Container
+          theme={{
+            display: "flex",
+            justifyContent: "space-evenly",
+            flexWrap: "wrap"
+          }}
+        >
           {cardContent.map((ele, index) => (
             <FeatureCard
               key={index}
@@ -194,33 +207,107 @@ export class HomePage extends Component {
               text={ele.text}
             />
           ))}
-        </section>
+        </Container>
         {/* Trips */}
-        <section className="feature-trip">
-          <h3 className="heading-2">Our Featured Trips</h3>
-          {/* Trip Nav */}
-          <nav className="feature-trip__nav">
-            <ul className="feature-trip__list">
+        <Container>
+          <h3
+            style={{
+              fontSize: "6rem",
+              textAlign: "center",
+              paddingTop: "9rem"
+            }}
+          >
+            Our Featured Trips
+          </h3>
+          <Navbar
+            theme={{
+              ItemBgColor: color.grey,
+              bgHoverColor: color.lightGrey,
+              hoverColor: "white",
+              fontSize: "2.5rem"
+            }}
+          >
+            <Navbar.List style={{ justifyContent: "center" }}>
               {tripNav.map((ele, index) => (
-                <li
+                <Navbar.Item
                   key={index}
-                  onClick={this.onChangeFeatureTrip}
+                  onClick={() =>
+                    this.onChangeFeatureTrip(ele.heading.toLowerCase())
+                  }
                   value={index}
-                  className={
+                  theme={
                     this.state.activeLink === index
-                      ? `feature-trip__list-item feature-trip__list-item--active`
-                      : "feature-trip__list-item"
+                      ? { beforeWidth: "65%" }
+                      : null
                   }
                 >
                   {ele.heading}
-                </li>
+                </Navbar.Item>
               ))}
-            </ul>
-          </nav>
+            </Navbar.List>
+          </Navbar>
+        </Container>
+        <Container
+          theme={{
+            display: "flex",
+            justifyContent: "space-evenly",
+            flexWrap: "wrap"
+          }}
+        >
           {tripContent}
-        </section>
+        </Container>
+        <Row theme={{ padding: "12rem 0", background: color.veryLightGrey }}>
+          <Container>
+            <h3
+              style={{
+                fontSize: "6rem",
+                textAlign: "center",
+                padding: "5rem"
+              }}
+            >
+              “Amazing experience”
+            </h3>
+            <Row theme={{ display: "flex" }}>
+              <Col
+                theme={{
+                  col: "50%",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  padding: "0 4rem"
+                }}
+              >
+                <Text theme={{ fontSize: "2rem" }}>
+                  Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sed,
+                  dolorem eos eligendi eveniet facere tempore est quaerat quia,
+                  omnis adipisci voluptatibus veniam, in error distinctio
+                  sapiente eius et impedit. Praesentium. Lorem ipsum dolor, sit
+                  amet consectetur adipisicing elit. Sed, dolorem eos eligendi
+                  eveniet facere tempore est quaerat quia, omnis adipisci
+                  voluptatibus veniam, in error distinctio sapiente eius et
+                  impedit. Praesentium. Lorem ipsum dolor, sit amet consectetur
+                  adipisicing elit. Sed, dolorem eos eligendi eveniet facere
+                  tempore est quaerat quia, omnis adipisci voluptatibus veniam,
+                  in error distinctio sapiente eius et impedit. Praesentium.
+                  Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sed,
+                  dolorem eos eligendi eveniet facere tempore est quaerat quia,
+                  omnis adipisci voluptatibus veniam, in error distinctio
+                  sapiente eius et impedit. Praesentium.
+                </Text>
+              </Col>
+              <Col theme={{ col: "50%" }}>
+                <img
+                  style={{ width: "100%", padding: "0 4rem" }}
+                  src="https://images.unsplash.com/photo-1511198384845-3f4e85bfe1c1?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=14c21dc56ff09ea30bc9cd301e8875d3&auto=format&fit=crop&w=1351&q=80"
+                  alt="image"
+                />
+              </Col>
+            </Row>
+          </Container>
+        </Row>
+
         <Footer />
-      </div>
+      </React.Fragment>
     );
   }
 }

@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { media, options } from "../../../theme/style";
 
 export const FormContainer = styled.div`
   width: 20vw;
@@ -12,6 +13,13 @@ export const FormContainer = styled.div`
   & > *:not(:last-child) {
     margin-bottom: 1rem;
   }
+
+  ${media.tablet`width: 70vw;`};
+  ${media.phone`width: 80vw;`};
+`;
+
+export const FormGroup = styled.div`
+  padding-bottom: 1rem;
 `;
 
 export const Input = styled.input`
@@ -23,29 +31,5 @@ export const Input = styled.input`
   border-style: solid;
   border-color: rgb(230, 230, 230);
   border-image: initial;
-`;
-
-export const Button = styled.button`
-  border: none;
-  padding: 1.8rem 3rem;
-  font-size: 1.6rem;
-  transition: all 0.2s;
-  display: inline-block;
-  background-color: transparent;
-  cursor: pointer;
-  color: white;
-  &:hover {
-    outline: none;
-    box-shadow: 0 0.2rem 1rem rgba(0, 0, 0, 0.5);
-  }
-  &:active {
-    outline: none;
-    border: none;
-    box-shadow: 0 0.2rem 1rem rgba(0, 0, 0, 0);
-  }
-
-  display: ${props => props.theme.display && props.theme.display};
-  width: ${props => props.theme.width && props.theme.width};
-  background-color: ${props =>
-    props.theme.backgroundColor && props.theme.backgroundColor};
+  ${options};
 `;

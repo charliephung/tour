@@ -5,17 +5,6 @@ import { Link } from "react-router-dom";
 // Redux
 import { compose } from "redux";
 import { connect } from "react-redux";
-// CSS
-import {
-  overviewNavPreStyle,
-  overviewNavListStyle,
-  overviewNavStyle,
-  overviewNavStyleMedia,
-  overviewNavListStyleMedia,
-  bookFormStyle,
-  NavBarStyles,
-  NavBarListStyles
-} from "./css/tripPageStyle";
 // actions
 import { actFetchTripContent } from "../actions/trip";
 // utils
@@ -25,68 +14,43 @@ import { color } from "../theme/color";
 import withFadeOnMount from "../HOComponent/fadeOnMount";
 // Comp
 import Header from "../components/header/Header";
-import HeaderImage from "../components/homepage/HeaderImage";
 import Overview from "../components/trippage/Overview";
-import OverviewNav from "../components/trippage/OverviewNav";
-import OverviewSubNav from "../components/trippage/OverviewSubNav";
-import OverviewReview from "../components/trippage/OverviewReview";
-import OverviewComment from "../components/trippage/OverviewComment";
 import Gallery from "../components/trippage/OverviewGallery";
 import Book from "../components/trippage/Book";
 import Footer from "../components/footer/Footer";
 import Section from "../components/common/section/Section";
-import OverviewFixedNavbar from "../components/trippage/overviewNavbar/OverviewFixedNavbar";
 import Navbar from "../components/navbar/Navbar";
+import { Container, Row, Col } from "../theme/style";
+
+const overviewNav = ["Overview", "Guide", "Review", "Gallery", "Book"];
 
 export class TripPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      overviewNavStyle: overviewNavPreStyle,
-      overviewNavListStyle: overviewNavListStyle,
-      bookFormStyle: overviewNavListStyle,
       viewingContent: {
         view: "overview"
       },
+      fixedLayout: false,
+      fixedBook: false,
       tripContent: null
     };
     this.section = React.createRef();
-    this.navBar = React.createRef();
-    this.overviewNav = React.createRef();
-    this.bookForm = React.createRef();
   }
 
   componentDidMount() {
-    this.props.actFetchTripContent(this.props.match.params.tripId);
-
+    if (this.props.tripContent) {
+      if (this.props.tripContent._id !== this.props.match.params.tripId)
+        this.props.actFetchTripContent(this.props.match.params.tripId);
+    }
     window.addEventListener("scroll", this.onScroll);
   }
   componentWillUnmount() {
     window.removeEventListener("scroll", this.onScroll);
   }
 
-  onToggleStyle = (ceiling, stateField, preStyle, nextStyle) => {
-    if (ceiling < 0) {
-      // Only set state when fallback style is diff
-      if (this.state[stateField] !== preStyle) {
-        this.setState({
-          [stateField]: preStyle
-        });
-      }
-    } else {
-      // Only set state when fallback style is diff
-      if (this.state[stateField] !== nextStyle) {
-        this.setState({
-          [stateField]: nextStyle
-        });
-      }
-    }
-  };
-
   onScroll = () => {
-    // this.onViewContent();
-    this.onSetOverviewNavBar();
-    // this.onSetBookForm();
+    this.onShowSubNavBar();
   };
 
   onAnimatedScroll = offsetHeight => {
@@ -96,84 +60,48 @@ export class TripPage extends Component {
   };
 
   onScrollToFlag = flagIndex => {
-    this.section.scrollToFlag(flagIndex, 45);
+    this.section.scrollToFlag(flagIndex, 120);
   };
 
-  // onViewContent = () => {
-  //   let viewingContent = {
-  //     overview: this.overview.getChildDOMRect().overview.top,
-  //     guide: this.overview.getChildDOMRect().guide.top,
-  //     review: this.overview.getChildDOMRect().review.top,
-  //     gallery: this.gallery.current.props.getDOMRect("gallery").top
-  //   };
-  //   const index = indexOfMin(Object.values(viewingContent), { absolute: true });
-  //   // Only update when goto new section
-  //   if (Object.keys(viewingContent)[index] !== this.state.viewingContent.view) {
-  //     this.setState({
-  //       viewingContent: {
-  //         view: Object.keys(viewingContent)[index]
-  //       }
-  //     });
-  //   }
-  // };
-
-  onSetOverviewNavBar = () => {
-    // const navbarheight = this.navBar.current.wrappedInstance.refs.node
-    //   .offsetHeight;
-    // const overviewNavOffSetTop = this.section.getFlagsPosition()[0].top - 100;
-    // // Check if nav is out if wp
-    // this.onToggleStyle(
-    //   overviewNavOffSetTop,
-    //   "overviewNavStyle",
-    //   overviewNavStyle,
-    //   overviewNavPreStyle
-    // );
-    // this.onToggleStyle(
-    //   overviewNavOffSetTop,
-    //   "overviewNavListStyle",
-    //   overviewNavListStyle,
-    //   overviewNavListStyle
-    // );
-    // // Check if viewport width is lower than 1100
-    // if (
-    //   Math.max(document.documentElement.clientWidth, window.innerWidth || 0) <=
-    //   1100
-    // ) {
-    //   // Check if nav is out if wp
-    //   this.onToggleStyle(
-    //     overviewNavOffSetTop,
-    //     "overviewNavStyle",
-    //     overviewNavStyleMedia,
-    //     overviewNavPreStyle
-    //   );
-    //   this.onToggleStyle(
-    //     overviewNavOffSetTop,
-    //     "overviewNavListStyle",
-    //     overviewNavListStyleMedia,
-    //     overviewNavListStyle
-    //   );
-    // }
-  };
-
-  onSetBookForm = () => {
-    // Check if bookform is out of wp then set style = fix or normal
-    this.onChangeStyleByView(
-      this.bookForm.current.bookForm.current.getBoundingClientRect().top - 111,
-      "bookFormStyle",
-      bookFormStyle,
-      null
-    );
-    if (
-      Math.max(document.documentElement.clientWidth, window.innerWidth || 0) <=
-      1100
-    ) {
-      if (this.state.bookFormStyle !== null) {
-        this.setState({ bookFormStyle: null });
+  onShowSubNavBar = () => {
+    const { overview } = this.section.getFlagsPosition();
+    const { mainNav } = this.section.getFlagsOffSet();
+    const { fixedLayout, fixedBook } = this.state;
+    if (window.innerWidth < 1000) {
+      if (fixedBook === true) {
+        this.setState({ fixedBook: false });
+      }
+      if (
+        overview.top - mainNav.offsetHeight - 60 < 0 &&
+        fixedLayout === false
+      ) {
+        this.setState({ fixedLayout: true });
+      }
+      if (
+        overview.top - mainNav.offsetHeight - 60 > 0 &&
+        fixedLayout === true
+      ) {
+        this.setState({ fixedLayout: false });
+      }
+    } else if (window.innerWidth > 1000) {
+      if (
+        overview.top - mainNav.offsetHeight - 60 < 0 &&
+        fixedLayout === false
+      ) {
+        this.setState({ fixedLayout: true, fixedBook: true });
+      }
+      if (
+        overview.top - mainNav.offsetHeight - 60 > 0 &&
+        fixedLayout === true
+      ) {
+        this.setState({ fixedLayout: false, fixedBook: false });
       }
     }
   };
 
   render() {
+    const { fixedLayout, fixedBook } = this.state;
+
     const {
       headerImageUrl,
       pricePerDay,
@@ -184,72 +112,162 @@ export class TripPage extends Component {
       tripContent,
       gallery
     } = this.props.tripContent;
-
     return (
-      <div className="container">
-        <Navbar
-          theme={{
-            borderBottom: `1px solid ${color.grey}`,
-            bgHoverColor: color.lightGrey
-          }}
-          auth={this.props.auth}
-        >
-          <Navbar.List>
-            <Navbar.Item>
-              <Link to="/">
-                <h3>Tour</h3>
-              </Link>
-            </Navbar.Item>
-          </Navbar.List>
-          <Navbar.List style={{ marginLeft: "auto" }}>
-            <Navbar.AuthNav />
-          </Navbar.List>
-        </Navbar>
-        {/* Sub nav */}
+      <React.Fragment>
+        <Section onRef={ref => (this.section = ref)}>
+          <Section.Flag
+            style={{
+              position: "fixed",
+              zIndex: "900",
+              display: "flex",
+              width: "100%"
+            }}
+            flagName="mainNav"
+          >
+            <Navbar
+              theme={{
+                borderBottom: `1px solid ${color.grey}`,
+                bgHoverColor: color.veryLightGrey,
+                display: "flex"
+              }}
+              auth={this.props.auth}
+            >
+              <Navbar.List>
+                <Navbar.Item>
+                  <Link to="/">
+                    <h3>Tour</h3>
+                  </Link>
+                </Navbar.Item>
+              </Navbar.List>
+              <Navbar.List style={{ marginLeft: "auto" }}>
+                <Navbar.AuthNav />
+              </Navbar.List>
+            </Navbar>
+          </Section.Flag>
+          {/* SubNav */}
+          <Section.Flag
+            style={{
+              transition: "all .2s",
+              position: "fixed",
+              zIndex: "800",
+              top: `${
+                fixedLayout
+                  ? this.section.getFlagsOffSet().mainNav.offsetHeight + "px"
+                  : "0px"
+              }`,
+              width: "100%"
+            }}
+            flagName="subNav"
+          >
+            <Navbar
+              theme={{
+                borderBottom: `1px solid ${color.grey}`,
+                bgHoverColor: color.veryLightGrey,
+                ItemBgColor: color.orange
+              }}
+            >
+              <Navbar.List>
+                {overviewNav.map((ele, index) => (
+                  <Navbar.Item
+                    key={index}
+                    value={index}
+                    active={0}
+                    onClick={e => this.onScrollToFlag(e.target.value)}
+                  >
+                    {ele}
+                  </Navbar.Item>
+                ))}
+              </Navbar.List>
+            </Navbar>
+          </Section.Flag>
+          {/* Header */}
+          <Header
+            heading={title}
+            button={false}
+            renderImage={() => (
+              <Header.Image active={true} imageUrl={headerImageUrl} />
+            )}
+          >
+            <Header.Heading>{title}</Header.Heading>
+          </Header>
+          {/* Content */}
+          <Container>
+            {/* Overview  nav*/}
+            <Navbar
+              theme={{
+                bgHoverColor: color.veryLightGrey,
+                ItemBgColor: color.orange
+              }}
+            >
+              <Navbar.List>
+                {overviewNav.map((ele, index) => (
+                  <Navbar.Item
+                    key={index}
+                    value={index}
+                    active={0}
+                    onClick={e => this.onScrollToFlag(e.target.value)}
+                  >
+                    {ele}
+                  </Navbar.Item>
+                ))}
+              </Navbar.List>
+            </Navbar>
 
-        <OverviewFixedNavbar />
-        {/* Header */}
-        <Header heading={title} button={false}>
-          {() => <HeaderImage active={true} imageUrl={headerImageUrl} />}
-        </Header>
-        {/* Content */}
-        <div className="sub-container">
-          {/* Overview  nav*/}
-          <OverviewNav active={0} onClick={this.onScrollToFlag}>
-            <OverviewNav.Item>Overview</OverviewNav.Item>
-            <OverviewNav.Item>Guide</OverviewNav.Item>
-            <OverviewNav.Item>Review</OverviewNav.Item>
-            <OverviewNav.Item>Gallery</OverviewNav.Item>
-          </OverviewNav>
-          {/* Overview */}
-          <Overview>
-            <Section onRef={ref => (this.section = ref)}>
-              <Section.Flag displayName="0" />
-              {/* Overview main text */}
-              <Overview.Content
-                title="Overview"
-                text={tripContent && tripContent.overview}
-              />
-              <Section.Flag displayName="1" />
-              {/* Guide */}
-              <Overview.Content
-                title="Guide"
-                text={tripContent && tripContent.itinerary}
-              />
-              {/* Review and comments */}
-              <Section.Flag displayName="2" />
-              <OverviewReview />
-              <Section.Flag displayName="3" />
-              <OverviewComment />
-              {/* Gallery */}
-              <Gallery images={gallery} />
-            </Section>
-          </Overview>
-          {/* Booking */}
-          <Book ref={this.bookForm} style={this.state.bookFormStyle} />
-        </div>
-        <Footer />
-      </div>
+            {/* Overview */}
+            <Section.Flag flagName="overview">
+              <Row theme={{ display: "flex" }}>
+                <Col theme={{ col: "70%", padding: "0 2rem" }}>
+                  <Overview>
+                    <Section.Flag flagName="0" />
+                    {/* Overview main text */}
+                    <Overview.Content
+                      title="Overview"
+                      text={tripContent && tripContent.overview}
+                    />
+                    <Section.Flag flagName="1" />
+                    {/* Guide */}
+                    <Overview.Content
+                      title="Guide"
+                      text={tripContent && tripContent.itinerary}
+                    />
+                    {/* Review and comments */}
+                    <Section.Flag flagName="2" />
+                    <Overview.Review />
+                    <Section.Flag flagName="3" />
+                    <Overview.Comment />
+                    {/* Gallery */}
+                    <Gallery images={gallery} />
+                  </Overview>
+                </Col>
+                <Col theme={{ col: "30%" }}>
+                  {/* Booking */}
+                  <Section.Flag flagName="4" />
+                  <Section.Flag
+                    style={
+                      fixedBook
+                        ? {
+                            position: "fixed",
+                            top: `${this.section.getFlagsOffSet().mainNav
+                              .offsetHeight +
+                              this.section.getFlagsOffSet().subNav
+                                .offsetHeight +
+                              10}px`,
+                            width: "fit-content"
+                          }
+                        : {}
+                    }
+                    flagName="book"
+                  >
+                    <Book />
+                  </Section.Flag>
+                </Col>
+              </Row>
+            </Section.Flag>
+          </Container>
+
+          <Footer />
+        </Section>
+      </React.Fragment>
     );
   }
 }

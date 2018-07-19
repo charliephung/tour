@@ -1,23 +1,19 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 // Comp
-import { FixedNavbar, NavList, NavListItem } from "./NavBar.style";
+import { NavList, NavListItem, Nav } from "./NavBar.style";
 import { Container } from "../../theme/style";
-import { ThemeProvider } from "styled-components";
-import { color } from "../../theme/color";
-import Modal from "../modal/Modal";
-import AuthForm from "../form/authForm/AuthForm";
 // actions
 import { actOpenModal, actCloseModal } from "../../actions/modal";
-import { actLogout } from "../../actions/auth";
+import { actLogout, actGoogleLogin } from "../../actions/auth";
 // ulti
 import isEmpty from "../../utils/isEmpty";
 
 const NavBarContext = React.createContext({
   auth: {},
   actOpenModal: () => {},
-  actLogout: () => {}
+  actLogout: () => {},
+  actGoogleLogin: () => {}
 });
 const NavBarConsumer = props => {
   return (
@@ -65,18 +61,38 @@ export class Navbar extends Component {
     );
   };
 
-  static List = props => {
+  static List = ({ theme, children, ...props }) => {
     return (
       <NavBarConsumer>
-        {() => <NavList style={props.style}>{props.children}</NavList>}
+        {value => {
+          const propsTheme = {
+            ...value.theme,
+            ...theme
+          };
+          return (
+            <NavList theme={propsTheme} {...props} style={props.style}>
+              {children}
+            </NavList>
+          );
+        }}
       </NavBarConsumer>
     );
   };
 
-  static Item = props => {
+  static Item = ({ theme, children, ...props }) => {
     return (
       <NavBarConsumer>
-        {() => <NavListItem style={props.style}>{props.children}</NavListItem>}
+        {value => {
+          const propsTheme = {
+            ...value.theme,
+            ...theme
+          };
+          return (
+            <NavListItem theme={propsTheme} {...props} style={props.style}>
+              {children}
+            </NavListItem>
+          );
+        }}
       </NavBarConsumer>
     );
   };
@@ -87,23 +103,19 @@ export class Navbar extends Component {
   };
 
   render() {
-    const { theme, auth, isModal } = this.props;
+    const { theme, auth, children, ...rest } = this.props;
+
     return (
       <React.Fragment>
-        {isModal && (
-          <Modal>
-            <AuthForm display="flex" />
-          </Modal>
-        )}
-        <ThemeProvider theme={theme}>
-          <FixedNavbar style={{ zIndex: "999" }}>
-            <Container style={{ display: "flex", alignItems: "center" }}>
-              <NavBarContext.Provider value={{ ...this.state, auth }}>
-                {this.props.children}
-              </NavBarContext.Provider>
-            </Container>
-          </FixedNavbar>
-        </ThemeProvider>
+        <Nav theme={theme}>
+          <Container theme={theme}>
+            <NavBarContext.Provider
+              value={{ ...this.state, auth, theme, ...rest }}
+            >
+              {children}
+            </NavBarContext.Provider>
+          </Container>
+        </Nav>
       </React.Fragment>
     );
   }
@@ -112,11 +124,13 @@ export class Navbar extends Component {
 const mapStateToProps = state => ({ isModal: state.modal, auth: state.auth });
 const mapDispatchToProps = {
   actOpenModal,
-  actCloseModal,
-  actLogout
+  actLogout,
+  actGoogleLogin
 };
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
+  null,
+  { withRef: true }
 )(Navbar);

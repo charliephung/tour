@@ -1,12 +1,6 @@
 import React, { Component, Children } from "react";
 import * as Scroll from "react-scroll/modules";
-
-const Flag = props => {
-  if (props.displayName) {
-    this.displayName = props.displayName;
-  }
-  return <div ref={props.node} />;
-};
+import { fork } from "child_process";
 
 const onAnimatedScroll = (offsetHeight, duration = 500) => {
   Scroll.animateScroll.scrollTo(offsetHeight, {
@@ -14,13 +8,51 @@ const onAnimatedScroll = (offsetHeight, duration = 500) => {
   });
 };
 
+const SectionContext = React.createContext();
+const Consumer = props => {
+  return (
+    <SectionContext.Consumer>
+      {contextVal => {
+        if (!contextVal) {
+          throw new Error("Flag must be render inside Section");
+        }
+        return props.children(contextVal);
+      }}
+    </SectionContext.Consumer>
+  );
+};
+
+class Flag extends Component {
+  render() {
+    const { children, flagName, ...rest } = this.props;
+    return (
+      <Consumer>
+        {value => {
+          value.onRef(this);
+          return (
+            <div {...rest} ref={(this.node = React.createRef())}>
+              {children}
+            </div>
+          );
+        }}
+      </Consumer>
+    );
+  }
+}
+
 export class Section extends Component {
   static Flag = Flag;
   flagsNode = {};
+  flagsRef = {};
 
   componentDidMount() {
     if (this.props.onRef) {
       this.props.onRef(this);
+      Object.keys(this.flagsRef).forEach((ele, index) => {
+        this.flagsNode[ele] = {
+          node: this.flagsRef[ele].node.current
+        };
+      });
     }
   }
   componentWillUnmount() {
@@ -31,27 +63,24 @@ export class Section extends Component {
 
   getFlagsPosition = () => {
     if (Object.keys(this.flagsNode).length === 0) return {};
-    const flagPositions = Object.entries(this.flagsNode).reduce(
-      (obj, [key, value]) => {
-        obj[key] = value.current.getBoundingClientRect();
-        return obj;
-      },
-      {}
-    );
-    return flagPositions;
+    let result = {};
+    Object.keys(this.flagsNode).forEach(ele => {
+      result[ele] = this.flagsNode[ele].node.getBoundingClientRect();
+    });
+    return result;
   };
   getFlagsOffSet = () => {
     if (Object.keys(this.flagsNode).length === 0) return {};
-    return Object.entries(this.flagsNode).reduce((obj, [key, value]) => {
-      obj[key] = {
-        offsetHeight: value.current.offsetHeight,
-        offsetLeft: value.current.offsetLeft,
-        offsetTop: value.current.offsetTop,
-        offsetWidth: value.current.offsetWidth
+    let result = {};
+    Object.keys(this.flagsNode).forEach(ele => {
+      result[ele] = {
+        offsetHeight: this.flagsNode[ele].node.offsetHeight,
+        offsetLeft: this.flagsNode[ele].node.offsetLeft,
+        offsetTop: this.flagsNode[ele].node.offsetTop,
+        offsetWidth: this.flagsNode[ele].node.offsetWidth
       };
-
-      return obj;
-    }, {});
+    });
+    return result;
   };
 
   scrollToFlag = (flag, top = 0, duration) => {
@@ -73,16 +102,20 @@ export class Section extends Component {
   };
 
   render() {
-    return React.Children.map(this.props.children, (child, index) => {
-      if (child.type.name === "Flag") {
-        return React.cloneElement(child, {
-          node: (this.flagsNode[
-            child.props.displayName || index
-          ] = React.createRef())
-        });
-      }
-      return React.cloneElement(child);
-    });
+    return (
+      <SectionContext.Provider
+        value={{
+          onRef: node => {
+            if (node.props.flagName === undefined) {
+              throw new Error("Flag is missing flagName props");
+            }
+            this.flagsRef[node.props.flagName] = node;
+          }
+        }}
+      >
+        {this.props.children}
+      </SectionContext.Provider>
+    );
   }
 }
 

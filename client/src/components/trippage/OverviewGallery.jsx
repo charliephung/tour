@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 const showImage = images => {
   if (!images) {
-    return null;
+    return <p>No images</p>;
   }
   if (images && images.length > 7) {
     images.splice(7);
@@ -17,16 +17,13 @@ const showImage = images => {
   return result;
 };
 
-export class OverviewGallery extends Component {
-  render() {
-    const { images } = this.props;
-    return (
-      <section className="gallery" ref={this.props.node}>
-        <h3 className="heading-3 ">Gallery</h3>
-        {showImage(images)}
-      </section>
-    );
-  }
-}
+const OverviewGallery = ({ images }) => {
+  return (
+    <section style={{ fontSize: "1.6rem" }}>
+      <h3 style={{ fontSize: "2.5rem" }}>Gallery</h3>
+      {showImage(images)}
+    </section>
+  );
+};
 
 export default OverviewGallery;
