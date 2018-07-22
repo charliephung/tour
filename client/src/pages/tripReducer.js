@@ -12,3 +12,17 @@ export const uiReducer = (initState, condition) => {
       return { ...initState };
   }
 };
+
+export const activeIndexReducer = (initState, positions, offsetTop) => {
+  let arr = Object.keys(positions).map((ele, index) => {
+    return positions[ele].top + offsetTop;
+  });
+  arr = arr.slice(0, 5);
+  const posArr = arr.filter(ele => ele > 0);
+  const min = Math.min(...posArr);
+  const index = arr.findIndex(ele => ele === min);
+  if (index !== initState) {
+    return index;
+  }
+  return initState;
+};

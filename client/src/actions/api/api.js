@@ -10,5 +10,12 @@ export default {
     withGoogle: data => {
       return axios.post("/api/auth/google/", data).then(res => res.data);
     }
+  },
+  user: {
+    comment: (tripId, data) => {
+      return axios
+        .post(`/api/trips/${tripId}/review`, data)
+        .then(res => res.data);
+    }
   }
 };

@@ -9,6 +9,7 @@ import rootReducer from "./reducer/rootReducer";
 import jwtDecode from "jwt-decode";
 // act type
 import { SET_USER_TOKEN, REMOVE_USER_TOKEN } from "./constants/actionTypes";
+import setAuthToken from "./utils/setAuthToken";
 // Create store
 const store = createStore(
   rootReducer,
@@ -19,17 +20,23 @@ const store = createStore(
 
 // Check if user has token
 if (localStorage.tourJWT) {
-  const userInfo = jwtDecode(localStorage.tourJWT);
-  if (userInfo.exp >= Date.now()) {
+  if (localStorage.tourJWT === undefined) {
     store.dispatch({
       type: REMOVE_USER_TOKEN
     });
+  } else {
+    const userInfo = jwtDecode(localStorage.tourJWT);
+    if (!userInfo || userInfo.exp <= Date.now() / 1000) {
+      store.dispatch({
+        type: REMOVE_USER_TOKEN
+      });
+    } else {
+      store.dispatch({
+        type: SET_USER_TOKEN,
+        payload: { token: localStorage.tourJWT }
+      });
+    }
   }
-
-  store.dispatch({
-    type: SET_USER_TOKEN,
-    payload: { token: localStorage.tourJWT }
-  });
 }
 
 ReactDOM.render(

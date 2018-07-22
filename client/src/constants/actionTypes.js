@@ -9,6 +9,9 @@ export const FETCH_TRIP_BY_ID = "FETCH_TRIP_BY_ID";
 export const FETCH_TRIP_LOADING_START = "FETCH_TRIP_LOADING_START";
 export const FETCH_TRIP_LOADING_END = "FETCH_TRIP_LOADING_END";
 export const CANCEL_FETCH_TRIP = "CANCEL_FETCH_TRIP";
+// Commment
+export const ADD_COMMENT = "ADD_COMMENT";
+
 // Loading
 export const LOADING_START = "LOADING_START";
 export const LOADING_END = "LOADING_END";

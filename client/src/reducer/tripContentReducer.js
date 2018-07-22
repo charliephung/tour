@@ -1,4 +1,4 @@
-import { FETCH_TRIP_BY_ID } from "../constants/actionTypes";
+import { FETCH_TRIP_BY_ID, ADD_COMMENT } from "../constants/actionTypes";
 
 const initialState = {};
 
@@ -9,6 +9,9 @@ const tripContentReducer = (state = initialState, actions) => {
       return {
         ...actions.payload.trip
       };
+    case ADD_COMMENT:
+      return { ...state, ...state.reviews.unshift(actions.payload) };
+
     default:
       return state;
   }

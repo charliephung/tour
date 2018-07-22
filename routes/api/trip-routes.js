@@ -2,6 +2,7 @@ const router = require("express").Router();
 const errormsg = require("../../messages/status-messages");
 const Trip = require("../../models/Trip");
 const TripContent = require("../../models/TripContent");
+const Review = require("../../models/Review");
 const passport = require("passport");
 // Validate
 const isAdmin = require("../../middleware/isAdmin");
@@ -31,6 +32,14 @@ router.get("/:tripId", (req, res) => {
     _id: req.params.tripId
   })
     .populate("reviews")
+    .populate({
+      path: "reviews",
+      populate: {
+        path: "userId",
+        model: "users",
+        select: ["_id", "name", "avatar"]
+      }
+    })
     .populate("tripContent")
     .then(trips => {
       if (trips.length === 0) {
@@ -221,6 +230,7 @@ router.post(
     if (!isValid) {
       return res.status(400).json(errors);
     }
+
     Trip.findOne({
       _id: req.params.tripId
     })
@@ -229,13 +239,17 @@ router.post(
           .addReview({
             tripId: req.params.tripId,
             text: req.body.text,
-            userId: "5b28fcb19705ec45c55d7de1"
+            userId: req.user._id
           })
           .then(newReview => {
-            console.log(newReview);
-
             foundTrip.reviews.push(newReview._id);
-            foundTrip.save().then(updatedTrip => res.json(updatedTrip));
+            foundTrip.save().then(() => {
+              Review.findOne({ _id: newReview._id })
+                .populate("userId", ["avatar", "name", "_id"])
+                .then(result => {
+                  return res.json(result);
+                });
+            });
           });
       })
       .catch(err => {

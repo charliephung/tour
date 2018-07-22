@@ -6,8 +6,8 @@ import { Link } from "react-router-dom";
 import { compose } from "redux";
 import { connect } from "react-redux";
 // actions
-import { actFetchTripContent } from "../actions/trip";
-import { uiReducer } from "./tripReducer";
+import { actFetchTripContent, actAddComment } from "../actions/trip";
+import { uiReducer, activeIndexReducer } from "./tripReducer";
 // utils
 import isEmpty from "../utils/isEmpty";
 import { color } from "../theme/color";
@@ -22,6 +22,7 @@ import Footer from "../components/footer/Footer";
 import Section from "../components/common/section/Section";
 import Navbar from "../components/navbar/Navbar";
 import { Container, Row, Col } from "../theme/style";
+import OverviewComment from "../components/trippage/OverviewComment";
 
 const overviewNav = ["Overview", "Guide", "Review", "Gallery", "Book"];
 
@@ -29,9 +30,7 @@ export class TripPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      viewingContent: {
-        view: "overview"
-      },
+      activeIndex: 0,
       ui: {
         fixedLayout: false,
         fixedBook: false
@@ -53,8 +52,17 @@ export class TripPage extends Component {
     window.removeEventListener("scroll", this.onScroll);
   }
 
+  onSubmit = data => {
+    const { auth } = this.props;
+    this.props.actAddComment(this.props.match.params.tripId, {
+      userId: auth.id,
+      text: data
+    });
+  };
+
   onScroll = () => {
-    this.onShowSubNavBar();
+    this.onChangeUI();
+    this.onHighlightNav();
   };
 
   onAnimatedScroll = offsetHeight => {
@@ -67,24 +75,33 @@ export class TripPage extends Component {
     this.section.scrollToFlag(flagIndex, 120);
   };
 
-  onShowSubNavBar = () => {
+  onChangeUI = () => {
     const { overview } = this.section.getFlagsPosition();
     const { mainNav } = this.section.getFlagsOffSet();
     const { fixedLayout, fixedBook } = this.state.ui;
-    const changes = uiReducer(this.state.ui, {
+    const condition = {
       windowWidth: window.innerWidth,
       uiPosition: overview.top - mainNav.offsetHeight - 60,
       fixedBook,
       fixedLayout
-    });
+    };
+    const changes = uiReducer(this.state.ui, condition);
     if (JSON.stringify(changes) !== JSON.stringify(this.state.ui)) {
       this.setState({ ui: changes });
+    }
+  };
+  onHighlightNav = () => {
+    const positions = this.section.getFlagsPosition();
+    const { mainNav, subNav } = this.section.getFlagsOffSet();
+    const top = mainNav.offsetHeight + subNav.offsetHeight;
+    const changes = activeIndexReducer(this.state.activeIndex, positions, top);
+    if (this.state.activeIndex !== changes) {
+      this.setState({ activeIndex: changes });
     }
   };
 
   render() {
     const { fixedLayout, fixedBook } = this.state.ui;
-
     const {
       headerImageUrl,
       pricePerDay,
@@ -92,9 +109,13 @@ export class TripPage extends Component {
       rating,
       reviews,
       title,
-      tripContent,
-      gallery
+      tripContent
     } = this.props.tripContent;
+    let gallery = [];
+    if (tripContent) {
+      gallery = tripContent.gallery;
+    }
+
     return (
       <React.Fragment>
         <Section onRef={ref => (this.section = ref)}>
@@ -154,7 +175,7 @@ export class TripPage extends Component {
                   <Navbar.Item
                     key={index}
                     value={index}
-                    active={0}
+                    active={index === this.state.activeIndex}
                     onClick={e => this.onScrollToFlag(e.target.value)}
                   >
                     {ele}
@@ -187,7 +208,7 @@ export class TripPage extends Component {
                   <Navbar.Item
                     key={index}
                     value={index}
-                    active={0}
+                    active={index === this.state.activeIndex}
                     onClick={e => this.onScrollToFlag(e.target.value)}
                   >
                     {ele}
@@ -218,11 +239,24 @@ export class TripPage extends Component {
                     <Overview.Review
                       rating={rating === undefined ? [] : rating}
                     />
-                    <Section.Flag flagName="3" />
                     <h3 style={{ fontSize: "2.5rem" }}>Comment</h3>
-
-                    <Overview.Comment comments={reviews} />
+                    {/* Comment form */}
+                    {!isEmpty(this.props.auth) && (
+                      <OverviewComment
+                        auth={this.props.auth}
+                        onSubmit={this.onSubmit}
+                      />
+                    )}
+                    {/* Comment display */}
+                    {reviews && reviews.length !== 0 ? (
+                      reviews.map((ele, index) => (
+                        <Overview.Comment key={index} comments={ele} />
+                      ))
+                    ) : (
+                      <p style={{ fontSize: "1.6rem" }}>No comment yet</p>
+                    )}
                     {/* Gallery */}
+                    <Section.Flag flagName="3" />
                     <Gallery images={gallery} />
                   </Overview>
                 </Col>
@@ -265,7 +299,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  actFetchTripContent
+  actFetchTripContent,
+  actAddComment
 };
 
 export default compose(

@@ -6,7 +6,8 @@ import {
   FETCH_TRIP_LOADING_START,
   FETCH_TRIP_LOADING_END,
   FETCH_TRIPS_LOADING_START,
-  FETCH_TRIPS_LOADING_END
+  FETCH_TRIPS_LOADING_END,
+  ADD_COMMENT
 } from "../constants/actionTypes";
 
 export const actFetchTrips = location => {
@@ -60,4 +61,10 @@ export const actFetchTripContent = tripId => {
         dispatch({ type: FETCH_TRIP_LOADING_END });
       });
   };
+};
+
+export const actAddComment = (tripId, data) => dispatch => {
+  api.user.comment(tripId, data).then(res => {
+    dispatch({ type: ADD_COMMENT, payload: res });
+  });
 };

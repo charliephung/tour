@@ -79,7 +79,7 @@ export class Navbar extends Component {
     );
   };
 
-  static Item = ({ theme, children, ...props }) => {
+  static Item = ({ theme, children, active, ...props }) => {
     return (
       <NavBarConsumer>
         {value => {
@@ -87,8 +87,15 @@ export class Navbar extends Component {
             ...value.theme,
             ...theme
           };
+          const activeIndex =
+            active === undefined || active === false ? false : true;
           return (
-            <NavListItem theme={propsTheme} {...props} style={props.style}>
+            <NavListItem
+              theme={propsTheme}
+              active={activeIndex}
+              {...props}
+              style={props.style}
+            >
               {children}
             </NavListItem>
           );

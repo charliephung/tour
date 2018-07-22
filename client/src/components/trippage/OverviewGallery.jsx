@@ -9,8 +9,8 @@ const showImage = images => {
   }
   let result = [];
   result = images.map((ele, index) => (
-    <div key={index} className={`gallery__item gallery__item--${index + 1}`}>
-      <img className="gallery__photo" src={ele.imageUrl} alt={`${index}`} />
+    <div style={{ padding: "1rem", width: "300px" }} key={index}>
+      <img style={{ width: "100%" }} src={ele} alt={`${index}`} />
     </div>
   ));
 
@@ -21,7 +21,9 @@ const OverviewGallery = ({ images }) => {
   return (
     <section style={{ fontSize: "1.6rem", padding: "2rem 0" }}>
       <h3 style={{ fontSize: "2.5rem" }}>Gallery</h3>
-      {showImage(images)}
+      <div style={{ display: "flex", flexWrap: "wrap" }}>
+        {showImage(images)}
+      </div>
     </section>
   );
 };

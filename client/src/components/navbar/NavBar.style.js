@@ -35,8 +35,7 @@ export const NavListItem = styled.li`
     position: absolute;
     top: 80%;
     left: 50%;
-    width: ${props =>
-      props.theme.beforeWidth ? props.theme.beforeWidth : "0%"};
+    width: ${props => (props.active === true ? "60%" : "0%")};
     transform: translateX(-50%);
     height: 2px;
     background-color: ${props => props.theme.ItemBgColor};
