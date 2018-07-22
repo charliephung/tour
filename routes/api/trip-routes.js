@@ -260,6 +260,29 @@ router.post(
       });
   }
 );
+// @route /api/trips/:tripId/review/:commentId
+// @desc DELETE a review of trip
+// @access Private
+router.delete(
+  "/:tripId/review/:commentId",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    if (!req.user._id === req.body.userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+    Trip.findOne({ _id: req.params.tripId }).then(trip => {
+      trip
+        .removeReview(req.params.commentId)
+        .then(newTrip => {
+          return res.status(202).json({ success: "Deleted successfully" });
+        })
+        .catch(err => {
+          return res.status(404).json(err);
+        });
+    });
+  }
+);
+
 // @route /api/trips/:tripId/rate
 // @desc rate a trip
 // @access Private

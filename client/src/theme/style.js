@@ -112,4 +112,32 @@ export const Button = styled.button`
 
   display: ${props => props.theme.display};
   width: ${props => props.theme.width};
+
+  ${props =>
+    props.btnSm &&
+    css`
+      padding: 0.2rem 1.5rem;
+      font-size: 1.2rem;
+      &:hover {
+        outline: none;
+        box-shadow: 0 0.1rem 0.5rem rgba(0, 0, 0, 0.2);
+      }
+    `};
+  ${props =>
+    props.danger &&
+    css`
+      background-color: ${color.red};
+    `};
+`;
+
+export const Textarea = styled.textarea`
+  width: 100%;
+  font-size: 16px;
+  border-radius: 3px;
+  padding: 0.8em 1.1em;
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(230, 230, 230);
+  border-image: initial;
+  ${options};
 `;

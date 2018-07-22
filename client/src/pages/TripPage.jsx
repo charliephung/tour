@@ -6,7 +6,11 @@ import { Link } from "react-router-dom";
 import { compose } from "redux";
 import { connect } from "react-redux";
 // actions
-import { actFetchTripContent, actAddComment } from "../actions/trip";
+import {
+  actFetchTripContent,
+  actAddComment,
+  actDeleteComment
+} from "../actions/trip";
 import { uiReducer, activeIndexReducer } from "./tripReducer";
 // utils
 import isEmpty from "../utils/isEmpty";
@@ -22,7 +26,7 @@ import Footer from "../components/footer/Footer";
 import Section from "../components/common/section/Section";
 import Navbar from "../components/navbar/Navbar";
 import { Container, Row, Col } from "../theme/style";
-import OverviewComment from "../components/trippage/OverviewComment";
+import OverviewCommentForm from "../components/trippage/OverviewCommentForm";
 
 const overviewNav = ["Overview", "Guide", "Review", "Gallery", "Book"];
 
@@ -100,8 +104,17 @@ export class TripPage extends Component {
     }
   };
 
+  onDeleteComment = commentId => {
+    const data = {
+      commentId,
+      userId: this.props.auth.id
+    };
+    this.props.actDeleteComment(this.props.match.params.tripId, data);
+  };
+
   render() {
     const { fixedLayout, fixedBook } = this.state.ui;
+    const { auth } = this.props;
     const {
       headerImageUrl,
       pricePerDay,
@@ -134,7 +147,7 @@ export class TripPage extends Component {
                 bgHoverColor: color.veryLightGrey,
                 display: "flex"
               }}
-              auth={this.props.auth}
+              auth={auth}
             >
               <Navbar.List>
                 <Navbar.Item>
@@ -242,7 +255,7 @@ export class TripPage extends Component {
                     <h3 style={{ fontSize: "2.5rem" }}>Comment</h3>
                     {/* Comment form */}
                     {!isEmpty(this.props.auth) && (
-                      <OverviewComment
+                      <OverviewCommentForm
                         auth={this.props.auth}
                         onSubmit={this.onSubmit}
                       />
@@ -250,7 +263,12 @@ export class TripPage extends Component {
                     {/* Comment display */}
                     {reviews && reviews.length !== 0 ? (
                       reviews.map((ele, index) => (
-                        <Overview.Comment key={index} comments={ele} />
+                        <Overview.Comment
+                          key={index}
+                          comments={ele}
+                          auth={auth}
+                          onClick={this.onDeleteComment}
+                        />
                       ))
                     ) : (
                       <p style={{ fontSize: "1.6rem" }}>No comment yet</p>
@@ -300,7 +318,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   actFetchTripContent,
-  actAddComment
+  actAddComment,
+  actDeleteComment
 };
 
 export default compose(

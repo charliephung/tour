@@ -16,6 +16,13 @@ export default {
       return axios
         .post(`/api/trips/${tripId}/review`, data)
         .then(res => res.data);
+    },
+    deleteComment: (tripId, data) => {
+      console.log(data);
+
+      return axios
+        .delete(`/api/trips/${tripId}/review/${data.commentId}`, { data })
+        .then(res => res.data);
     }
   }
 };

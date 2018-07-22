@@ -72,4 +72,24 @@ TripSchema.methods.addReview = review => {
   });
 };
 
+TripSchema.methods.removeReview = function(id) {
+  return new Promise((resolve, reject) => {
+    const index = this.reviews.indexOf(id);
+    if (index === -1) {
+      reject({ error: "Not found" });
+    } else {
+      this.reviews.splice(index, 1);
+      this.save().then(newReview => {
+        Review.findByIdAndRemove(id)
+          .then(res => {
+            resolve(newReview);
+          })
+          .catch(err => {
+            reject(-1);
+          });
+      });
+    }
+  });
+};
+
 module.exports = Trip = mongoose.model("trips", TripSchema);

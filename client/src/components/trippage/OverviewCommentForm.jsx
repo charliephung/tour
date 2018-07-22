@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { FormGroup, Input } from "../form/authForm/AuthForm.style";
-import { Row, Button } from "../../theme/style";
+import { Row, Button, Textarea } from "../../theme/style";
 import { color } from "../../theme/color";
 
-export class OverviewFormComment extends Component {
+export class OverviewCommentForm extends Component {
   state = { text: "" };
 
   onChange = e => {
@@ -26,8 +26,20 @@ export class OverviewFormComment extends Component {
         <FormGroup>
           <div style={{ display: "flex" }}>
             <img style={{ height: "60px" }} src={auth.avatar} />
-            <Input name="text" value={text} onChange={this.onChange} />
-            <Button theme={{ bgColor: color.green }}>Submit</Button>
+            <Row>
+              <Textarea
+                style={{
+                  resize: "vertical",
+                  height: "200px",
+                  maxHeight: "200px"
+                }}
+                name="text"
+                value={text}
+                onChange={this.onChange}
+              />
+
+              <Button theme={{ bgColor: color.green }}>Submit</Button>
+            </Row>
           </div>
         </FormGroup>
       </form>
@@ -35,4 +47,4 @@ export class OverviewFormComment extends Component {
   }
 }
 
-export default OverviewFormComment;
+export default OverviewCommentForm;

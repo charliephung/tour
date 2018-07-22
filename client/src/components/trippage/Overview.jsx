@@ -1,12 +1,26 @@
 import React, { Component } from "react";
 import { textToParagraph, showRating } from "../../utils";
+import isEmpty from "../../utils/isEmpty";
+import { Button } from "../../theme/style";
 
 const UserComment = props => {
-  const { date, userId, text } = props.comments;
+  const { auth, onClick } = props;
+  const { date, userId, text, _id } = props.comments;
+
+  let deleteButton = null;
+  if (!isEmpty(auth)) {
+    deleteButton =
+      auth.id === userId._id ? (
+        <Button onClick={() => onClick(_id)} btnSm danger>
+          Delete
+        </Button>
+      ) : null;
+  }
+
   return (
     <React.Fragment>
       <div>
-        <div style={{ display: "flex" }}>
+        <div style={{ display: "flex", alignItems: "center" }}>
           <figure>
             <img
               style={{
@@ -22,7 +36,8 @@ const UserComment = props => {
             style={{
               display: "flex",
               flexDirection: "column",
-              justifyContent: "center"
+              justifyContent: "center",
+              marginRight: "10px"
             }}
           >
             <p
@@ -41,6 +56,7 @@ const UserComment = props => {
               {date}
             </p>
           </div>
+          {deleteButton}
         </div>
         <div style={{ marginTop: "1rem" }}>
           <div style={{ fontSize: "1.6rem" }}>{textToParagraph(text)}</div>

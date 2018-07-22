@@ -68,3 +68,8 @@ export const actAddComment = (tripId, data) => dispatch => {
     dispatch({ type: ADD_COMMENT, payload: res });
   });
 };
+export const actDeleteComment = (tripId, data) => dispatch => {
+  api.user.deleteComment(tripId, data).then(res => {
+    console.log(res);
+  });
+};
