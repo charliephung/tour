@@ -74,12 +74,14 @@ const Content = props => (
   </div>
 );
 
-const Review = ({ rating }) => {
+const Review = ({ rating, onClick }) => {
   return (
     <div style={{ padding: "2rem 0" }}>
       <h3 style={{ fontSize: "2.5rem" }}>Review</h3>
       <div style={{ display: "flex", fontSize: "2rem" }}>
-        <ul style={{ display: "flex" }}>{showRating(rating.length)}</ul>
+        <ul style={{ display: "flex" }}>
+          {showRating(rating.length, onClick)}
+        </ul>
         <span style={{ padding: "0 .5rem" }}>
           {!rating ? "No rating yet" : rating.length}
         </span>

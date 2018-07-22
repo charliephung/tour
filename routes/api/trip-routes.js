@@ -287,5 +287,23 @@ router.delete(
 // @desc rate a trip
 // @access Private
 // TODO
+router.delete(
+  "/:tripId/rate",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    console.log(req.body);
+
+    // Trip.findOne({ _id: req.params.tripId }).then(trip => {
+    //   trip
+    //     .removeReview(req.params.commentId)
+    //     .then(newTrip => {
+    //       return res.status(202).json({ success: "Deleted successfully" });
+    //     })
+    //     .catch(err => {
+    //       return res.status(404).json(err);
+    //     });
+    // });
+  }
+);
 
 module.exports = router;

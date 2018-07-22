@@ -17,11 +17,11 @@ export const textToParagraph = text => {
   return result;
 };
 
-export const showRating = rating => {
+export const showRating = (rating, onClick) => {
   let result = [];
   for (let i = 0; i < 5; i++) {
     result.push(
-      <li key={i}>
+      <li style={{ cursor: "pointer" }} onClick={() => onClick(i + 1)} key={i}>
         <i className="far fa-star" />
       </li>
     );
@@ -29,7 +29,7 @@ export const showRating = rating => {
 
   for (let i = 0; i < rating; i++) {
     result[i] = (
-      <li key={i}>
+      <li style={{ cursor: "pointer" }} onClick={() => onClick(i + 1)} key={i}>
         <i className="fas fa-star" />
       </li>
     );

@@ -111,6 +111,9 @@ export class TripPage extends Component {
     };
     this.props.actDeleteComment(this.props.match.params.tripId, data);
   };
+  onRating = rate => {
+    console.log(rate);
+  };
 
   render() {
     const { fixedLayout, fixedBook } = this.state.ui;
@@ -250,6 +253,7 @@ export class TripPage extends Component {
                     {/* Review and comments */}
                     <Section.Flag flagName="2" />
                     <Overview.Review
+                      onClick={this.onRating}
                       rating={rating === undefined ? [] : rating}
                     />
                     <h3 style={{ fontSize: "2.5rem" }}>Comment</h3>

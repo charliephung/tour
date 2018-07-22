@@ -18,10 +18,13 @@ export default {
         .then(res => res.data);
     },
     deleteComment: (tripId, data) => {
-      console.log(data);
-
       return axios
         .delete(`/api/trips/${tripId}/review/${data.commentId}`, { data })
+        .then(res => res.data);
+    },
+    rate: (tripId, data) => {
+      return axios
+        .post(`/api/trips/${tripId}/rate/${data}`)
         .then(res => res.data);
     }
   }

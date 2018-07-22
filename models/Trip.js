@@ -72,6 +72,30 @@ TripSchema.methods.addReview = review => {
   });
 };
 
+TripSchema.methods.rate = function(data) {
+  return new Promise((resolve, reject) => {
+    const index = this.rating.indexOf(ele => ele.user._id === data.userId);
+    if (index === -1) {
+      this.rating.push({
+        user: data.userId,
+        rate: data.rate
+      });
+    } else {
+      this.rating[index] = {
+        user: data.userId,
+        rate: data.rate
+      };
+    }
+    this.save()
+      .then(res => {
+        resolve(res);
+      })
+      .catch(err => {
+        reject(-1);
+      });
+  });
+};
+
 TripSchema.methods.removeReview = function(id) {
   return new Promise((resolve, reject) => {
     const index = this.reviews.indexOf(id);
