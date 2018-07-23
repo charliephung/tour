@@ -4,7 +4,7 @@ import isEmpty from "../../utils/isEmpty";
 import { Button } from "../../theme/style";
 
 const UserComment = props => {
-  const { auth, onClick } = props;
+  const { auth, onClick, loading } = props;
   const { date, userId, text, _id } = props.comments;
 
   let deleteButton = null;
@@ -12,7 +12,7 @@ const UserComment = props => {
     deleteButton =
       auth.id === userId._id ? (
         <Button onClick={() => onClick(_id)} btnSm danger>
-          Delete
+          {loading ? "......" : "Delete"}
         </Button>
       ) : null;
   }
@@ -75,13 +75,15 @@ const Content = props => (
 );
 
 const Review = ({ rating, onClick }) => {
+  const rate = rating.map(ele => ele.rate);
+  let avgRate = Math.ceil(rate.reduce((a, b) => a + b, 0) / rate.length);
+  avgRate === NaN ? 0 : avgRate;
+
   return (
     <div style={{ padding: "2rem 0" }}>
       <h3 style={{ fontSize: "2.5rem" }}>Review</h3>
       <div style={{ display: "flex", fontSize: "2rem" }}>
-        <ul style={{ display: "flex" }}>
-          {showRating(rating.length, onClick)}
-        </ul>
+        <ul style={{ display: "flex" }}>{showRating(avgRate, onClick)}</ul>
         <span style={{ padding: "0 .5rem" }}>
           {!rating ? "No rating yet" : rating.length}
         </span>

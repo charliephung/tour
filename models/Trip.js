@@ -116,4 +116,38 @@ TripSchema.methods.removeReview = function(id) {
   });
 };
 
+TripSchema.methods.rateTrip = function(userId, rate) {
+  const index = this.rating.findIndex(
+    ele => userId.toString() === ele.user.toString()
+  );
+
+  return new Promise((resolve, reject) => {
+    if (index === -1) {
+      this.rating.push({
+        user: userId,
+        rate
+      });
+      this.save()
+        .then(res => {
+          resolve(res);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    } else {
+      this.rating[index] = {
+        user: userId,
+        rate
+      };
+      this.save()
+        .then(res => {
+          resolve(res);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    }
+  });
+};
+
 module.exports = Trip = mongoose.model("trips", TripSchema);

@@ -1,18 +1,30 @@
 import React from "react";
-import ReactCSSTransitionGroup from "react-addons-css-transition-group";
-import "./drop.css";
+import {
+  CSSTransition,
+  CSSTransitionGroup,
+  transit
+} from "react-css-transition";
+
+CSSTransition.childContextTypes = {
+  //child context keys
+};
 
 const DropTransitionGroup = ({ children }) => {
   return (
-    <ReactCSSTransitionGroup
-      transitionName="drop"
-      transitionAppear={true}
-      transitionAppearTimeout={0}
-      transitionEnter={false}
-      transitionLeaveTimeout={0}
-    >
-      {children}
-    </ReactCSSTransitionGroup>
+    <CSSTransitionGroup>
+      {React.Children.map(children, child => (
+        <CSSTransition
+          defaultStyle={{
+            transform: transit("scaleY(0)", 200, "ease-in-out")
+          }}
+          enterStyle={{ transform: transit("scaleY(1)", 200, "ease-in-out") }}
+          leaveStyle={{ transform: transit("scaleY(0)", 200, "ease-in-out") }}
+          activeStyle={{ transform: transit("scaleY(1)", 200, "ease-in-out") }}
+        >
+          {child}
+        </CSSTransition>
+      ))}
+    </CSSTransitionGroup>
   );
 };
 

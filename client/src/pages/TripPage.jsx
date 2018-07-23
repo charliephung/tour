@@ -9,7 +9,8 @@ import { connect } from "react-redux";
 import {
   actFetchTripContent,
   actAddComment,
-  actDeleteComment
+  actDeleteComment,
+  actRateTrip
 } from "../actions/trip";
 import { uiReducer, activeIndexReducer } from "./tripReducer";
 // utils
@@ -17,6 +18,7 @@ import isEmpty from "../utils/isEmpty";
 import { color } from "../theme/color";
 // HOC
 import withFadeOnMount from "../HOComponent/fadeOnMount";
+import Drop from "../HOComponent/DropTransitionGroup";
 // Comp
 import Header from "../components/header/Header";
 import Overview from "../components/trippage/Overview";
@@ -112,12 +114,21 @@ export class TripPage extends Component {
     this.props.actDeleteComment(this.props.match.params.tripId, data);
   };
   onRating = rate => {
-    console.log(rate);
+    this.props.actRateTrip(
+      this.props.auth.id,
+      this.props.match.params.tripId,
+      rate
+    );
   };
 
   render() {
     const { fixedLayout, fixedBook } = this.state.ui;
-    const { auth } = this.props;
+    const {
+      auth,
+      addCommentIsLoading,
+      rateTripIsLoading,
+      deleteCommentIsLoading
+    } = this.props;
     const {
       headerImageUrl,
       pricePerDay,
@@ -253,6 +264,7 @@ export class TripPage extends Component {
                     {/* Review and comments */}
                     <Section.Flag flagName="2" />
                     <Overview.Review
+                      loading={rateTripIsLoading}
                       onClick={this.onRating}
                       rating={rating === undefined ? [] : rating}
                     />
@@ -262,18 +274,22 @@ export class TripPage extends Component {
                       <OverviewCommentForm
                         auth={this.props.auth}
                         onSubmit={this.onSubmit}
+                        loading={addCommentIsLoading}
                       />
                     )}
                     {/* Comment display */}
                     {reviews && reviews.length !== 0 ? (
-                      reviews.map((ele, index) => (
-                        <Overview.Comment
-                          key={index}
-                          comments={ele}
-                          auth={auth}
-                          onClick={this.onDeleteComment}
-                        />
-                      ))
+                      <Drop>
+                        {reviews.map((ele, index) => (
+                          <Overview.Comment
+                            key={ele._id}
+                            comments={ele}
+                            auth={auth}
+                            onClick={this.onDeleteComment}
+                            loading={deleteCommentIsLoading}
+                          />
+                        ))}
+                      </Drop>
                     ) : (
                       <p style={{ fontSize: "1.6rem" }}>No comment yet</p>
                     )}
@@ -317,13 +333,17 @@ export class TripPage extends Component {
 
 const mapStateToProps = state => ({
   tripContent: state.tripContent,
-  auth: state.auth
+  auth: state.auth,
+  addCommentIsLoading: state.loading.addCommentIsLoading,
+  deleteCommentIsLoading: state.loading.deleteCommentIsLoading,
+  rateTripIsLoading: state.loading.rateTripIsLoading
 });
 
 const mapDispatchToProps = {
   actFetchTripContent,
   actAddComment,
-  actDeleteComment
+  actDeleteComment,
+  actRateTrip
 };
 
 export default compose(

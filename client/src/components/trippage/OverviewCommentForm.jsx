@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { FormGroup, Input } from "../form/authForm/AuthForm.style";
 import { Row, Button, Textarea } from "../../theme/style";
 import { color } from "../../theme/color";
+import Roler from "../animation/Roler";
 
 export class OverviewCommentForm extends Component {
   state = { text: "" };
@@ -18,7 +19,7 @@ export class OverviewCommentForm extends Component {
   };
 
   render() {
-    const { auth } = this.props;
+    const { auth, loading } = this.props;
     const { text } = this.state;
 
     return (
@@ -38,7 +39,9 @@ export class OverviewCommentForm extends Component {
                 onChange={this.onChange}
               />
 
-              <Button theme={{ bgColor: color.green }}>Submit</Button>
+              <Button theme={{ bgColor: color.green }}>
+                {loading ? "......." : "Submit"}
+              </Button>
             </Row>
           </div>
         </FormGroup>

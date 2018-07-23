@@ -91,16 +91,9 @@ export class HomePage extends Component {
     this.onChangeLink(e);
     // Check if trips are already fetched
     const index = this.props.trips.findIndex(ele => ele.location === e);
-
     // fetched data when not found
     index === -1 && this.props.actFetchTrips(e);
   };
-  shouldComponentUpdate(nextProps) {
-    if (nextProps.trips.length !== 0) {
-      if (nextProps.trips === this.state.trips) return false;
-    }
-    return true;
-  }
 
   onChangeLink = e => {
     this.setState(state => {
@@ -110,7 +103,7 @@ export class HomePage extends Component {
     });
   };
 
-  componentDidMount() {
+  componentWillMount() {
     window.scrollTo(0, 0);
     // Fetch init data
     if (this.props.trips.length === 0) {

@@ -7,7 +7,15 @@ import {
   FETCH_TRIP_LOADING_END,
   FETCH_TRIPS_LOADING_START,
   FETCH_TRIPS_LOADING_END,
-  ADD_COMMENT
+  ADD_COMMENT_LOADING_START,
+  ADD_COMMENT_LOADING_END,
+  DELETE_COMMENT_LOADING_START,
+  DELETE_COMMENT_LOADING_END,
+  RATE_TRIP_LOADING_START,
+  RATE_TRIP_LOADING_END,
+  ADD_COMMENT,
+  DELETE_COMMENT,
+  RATE_TRIP
 } from "../constants/actionTypes";
 
 export const actFetchTrips = location => {
@@ -64,12 +72,30 @@ export const actFetchTripContent = tripId => {
 };
 
 export const actAddComment = (tripId, data) => dispatch => {
+  dispatch({ type: ADD_COMMENT_LOADING_START });
   api.user.comment(tripId, data).then(res => {
     dispatch({ type: ADD_COMMENT, payload: res });
+    dispatch({ type: ADD_COMMENT_LOADING_END });
   });
 };
 export const actDeleteComment = (tripId, data) => dispatch => {
+  dispatch({ type: DELETE_COMMENT_LOADING_START });
   api.user.deleteComment(tripId, data).then(res => {
-    console.log(res);
+    dispatch({ type: DELETE_COMMENT, payload: data.commentId });
+    dispatch({ type: DELETE_COMMENT_LOADING_END });
+  });
+};
+
+export const actRateTrip = (userId, tripId, data) => dispatch => {
+  dispatch({ type: RATE_TRIP_LOADING_START });
+  api.user.rate(tripId, data).then(res => {
+    dispatch({
+      type: RATE_TRIP,
+      payload: {
+        userId,
+        data
+      }
+    });
+    dispatch({ type: RATE_TRIP_LOADING_END });
   });
 };

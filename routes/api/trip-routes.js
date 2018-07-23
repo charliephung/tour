@@ -230,7 +230,6 @@ router.post(
     if (!isValid) {
       return res.status(400).json(errors);
     }
-
     Trip.findOne({
       _id: req.params.tripId
     })
@@ -253,8 +252,6 @@ router.post(
           });
       })
       .catch(err => {
-        console.log(err);
-
         errors.error = errormsg["404"];
         return res.status(404).json(errors);
       });
@@ -287,22 +284,20 @@ router.delete(
 // @desc rate a trip
 // @access Private
 // TODO
-router.delete(
-  "/:tripId/rate",
+router.post(
+  "/:tripId/rate/:rate",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    console.log(req.body);
-
-    // Trip.findOne({ _id: req.params.tripId }).then(trip => {
-    //   trip
-    //     .removeReview(req.params.commentId)
-    //     .then(newTrip => {
-    //       return res.status(202).json({ success: "Deleted successfully" });
-    //     })
-    //     .catch(err => {
-    //       return res.status(404).json(err);
-    //     });
-    // });
+    Trip.findOne({ _id: req.params.tripId }).then(trip => {
+      trip
+        .rateTrip(req.user.id, req.params.rate)
+        .then(newTrip => {
+          return res.status(202).json({ success: "Rate successfully" });
+        })
+        .catch(err => {
+          return res.status(404).json(err);
+        });
+    });
   }
 );
 

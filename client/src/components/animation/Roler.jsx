@@ -1,7 +1,7 @@
 import React from "react";
 import "./roler.css";
 
-const Roler = () => {
+const Roler = ({ color }) => {
   return (
     <div className="lds-roller">
       <div />

@@ -11,6 +11,9 @@ const FeatureTrip = props => {
     rating,
     reviews
   } = props.trip;
+  const rate = rating.map(ele => ele.rate);
+  let avgRate = Math.ceil(rate.reduce((a, b) => a + b, 0) / rate.length);
+  avgRate === NaN ? 0 : avgRate;
 
   return (
     <Card
@@ -37,7 +40,7 @@ const FeatureTrip = props => {
           alignItems: "center"
         }}
       >
-        <ul style={{ display: "flex" }}>{showRating(rating)}</ul>
+        <ul style={{ display: "flex" }}>{showRating(avgRate)}</ul>
         <p>
           {reviews.length <= 1
             ? `${reviews.length} review
