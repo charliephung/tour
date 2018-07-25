@@ -38,7 +38,7 @@ injectGlobal`
 
   html {
     box-sizing: border-box;
-    font-size: 50.5%;
+    font-size: 62.5%;
     font-family: sans-serif;
     ${media.tablet`font-size: 50%;`}
     ${media.phone`font-size: 40%;`}
