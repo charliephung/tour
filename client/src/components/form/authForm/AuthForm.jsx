@@ -59,7 +59,9 @@ export class AuthForm extends Component {
                 bgColor: color.green
               }}
             >
-              Log in
+              Log in (Coming soon).
+              <br />
+              Please use google instead
             </Button>
             <hr />
             <p style={{ textAlign: "center" }} className="paragraph">
