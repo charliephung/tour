@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { FormGroup, Input } from "../form/authForm/AuthForm.style";
 import { Row, Button, Textarea } from "../../theme/style";
 import { color } from "../../theme/color";
-import Roler from "../animation/Roler";
 
 export class OverviewCommentForm extends Component {
   state = { text: "" };
@@ -19,8 +18,20 @@ export class OverviewCommentForm extends Component {
   };
 
   render() {
-    const { auth, loading } = this.props;
+    const { auth, loading, inValid } = this.props;
     const { text } = this.state;
+    const style = inValid
+      ? {
+          resize: "vertical",
+          height: "200px",
+          maxHeight: "200px",
+          border: "1px solid red"
+        }
+      : {
+          resize: "vertical",
+          height: "200px",
+          maxHeight: "200px"
+        };
 
     return (
       <form onSubmit={this.onSubmit}>
@@ -29,15 +40,21 @@ export class OverviewCommentForm extends Component {
             <img style={{ height: "60px" }} src={auth.avatar} />
             <Row>
               <Textarea
-                style={{
-                  resize: "vertical",
-                  height: "200px",
-                  maxHeight: "200px"
-                }}
+                style={style}
                 name="text"
                 value={text}
                 onChange={this.onChange}
               />
+              {inValid && (
+                <p
+                  style={{
+                    color: "red",
+                    fontSize: "1.5rem"
+                  }}
+                >
+                  {inValid}
+                </p>
+              )}
 
               <Button theme={{ bgColor: color.green }}>
                 {loading ? "......." : "Submit"}

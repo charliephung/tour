@@ -83,9 +83,9 @@ const Review = ({ rating, onClick }) => {
     <div style={{ padding: "2rem 0" }}>
       <h3 style={{ fontSize: "2.5rem" }}>Review</h3>
       <div style={{ display: "flex", fontSize: "2rem" }}>
-        <ul style={{ display: "flex" }}>{showRating(avgRate, onClick)}</ul>
+        <ul style={{ display: "flex" }}> {showRating(avgRate, onClick)}</ul>
         <span style={{ padding: "0 .5rem" }}>
-          {!rating ? "No rating yet" : rating.length}
+          {!rating ? "No rating yet" : `${avgRate} - ${rating.length} reviews`}
         </span>
       </div>
     </div>

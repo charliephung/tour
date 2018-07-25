@@ -20,10 +20,15 @@ export const DELETE_COMMENT_LOADING_END = "DELETE_COMMENT_LOADING_END";
 export const RATE_TRIP = "RATE_TRIP";
 export const RATE_TRIP_LOADING_START = "RATE_TRIP_LOADING_START";
 export const RATE_TRIP_LOADING_END = "RATE_TRIP_LOADING_END";
-
 // Loading
 export const LOADING_START = "LOADING_START";
 export const LOADING_END = "LOADING_END";
 // Modal
 export const OPEN_MODAL = "OPEN_MODAL";
 export const CLOSE_MODAL = "CLOSE_MODAL";
+// Error
+export const ERROR = "ERROR";
+// Booking
+export const BOOKING = "BOOKING";
+export const BOOKING_LOADING_START = "BOOKING_LOADING_START";
+export const BOOKING_LOADING_END = "BOOKING_LOADING_END";

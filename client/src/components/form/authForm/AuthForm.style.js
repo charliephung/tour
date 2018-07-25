@@ -1,5 +1,6 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { media, options } from "../../../theme/style";
+import { color } from "../../../theme/color";
 
 export const FormContainer = styled.div`
   width: 20vw;
@@ -32,4 +33,10 @@ export const Input = styled.input`
   border-color: rgb(230, 230, 230);
   border-image: initial;
   ${options};
+
+  ${props =>
+    props.inValid &&
+    css`
+      border-color: ${color.red};
+    `};
 `;

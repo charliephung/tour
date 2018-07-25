@@ -8,7 +8,9 @@ import {
   DELETE_COMMENT_LOADING_START,
   DELETE_COMMENT_LOADING_END,
   RATE_TRIP_LOADING_START,
-  RATE_TRIP_LOADING_END
+  RATE_TRIP_LOADING_END,
+  BOOKING_LOADING_START,
+  BOOKING_LOADING_END
 } from "../constants/actionTypes";
 
 const initialState = {
@@ -16,7 +18,8 @@ const initialState = {
   fetchTripsIsLoading: true,
   addCommentIsLoading: false,
   deleteCommentIsLoading: false,
-  rateTripIsLoading: false
+  rateTripIsLoading: false,
+  bookingIsLoading: false
 };
 
 const asyncReducer = (state = initialState, actions) => {
@@ -43,12 +46,14 @@ const asyncReducer = (state = initialState, actions) => {
       return { ...state, deleteCommentIsLoading: false };
     // Rate trip
     case RATE_TRIP_LOADING_START:
-      console.log("here");
-      console.log(state);
-
       return { ...state, rateTripIsLoading: true };
     case RATE_TRIP_LOADING_END:
       return { ...state, rateTripIsLoading: false };
+    // Book
+    case BOOKING_LOADING_START:
+      return { ...state, bookingIsLoading: true };
+    case BOOKING_LOADING_END:
+      return { ...state, bookingIsLoading: false };
 
     default:
       return state;

@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const keys = require("./config/keys");
 const bodyParser = require("body-parser");
 const passport = require("passport");
+
 // app config
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

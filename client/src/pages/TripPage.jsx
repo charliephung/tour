@@ -127,7 +127,8 @@ export class TripPage extends Component {
       auth,
       addCommentIsLoading,
       rateTripIsLoading,
-      deleteCommentIsLoading
+      deleteCommentIsLoading,
+      error
     } = this.props;
     const {
       headerImageUrl,
@@ -142,7 +143,6 @@ export class TripPage extends Component {
     if (tripContent) {
       gallery = tripContent.gallery;
     }
-
     return (
       <React.Fragment>
         <Section onRef={ref => (this.section = ref)}>
@@ -275,6 +275,7 @@ export class TripPage extends Component {
                         auth={this.props.auth}
                         onSubmit={this.onSubmit}
                         loading={addCommentIsLoading}
+                        inValid={!isEmpty(error.text) && error.text}
                       />
                     )}
                     {/* Comment display */}
@@ -291,7 +292,9 @@ export class TripPage extends Component {
                         ))}
                       </Drop>
                     ) : (
-                      <p style={{ fontSize: "1.6rem" }}>No comment yet</p>
+                      <Drop>
+                        <p style={{ fontSize: "1.6rem" }}>No comment yet</p>
+                      </Drop>
                     )}
                     {/* Gallery */}
                     <Section.Flag flagName="3" />
@@ -317,7 +320,7 @@ export class TripPage extends Component {
                     }
                     flagName="book"
                   >
-                    <Book />
+                    <Book params={this.props.match.params} />
                   </Section.Flag>
                 </Col>
               </Row>
@@ -336,7 +339,8 @@ const mapStateToProps = state => ({
   auth: state.auth,
   addCommentIsLoading: state.loading.addCommentIsLoading,
   deleteCommentIsLoading: state.loading.deleteCommentIsLoading,
-  rateTripIsLoading: state.loading.rateTripIsLoading
+  rateTripIsLoading: state.loading.rateTripIsLoading,
+  error: state.error
 });
 
 const mapDispatchToProps = {

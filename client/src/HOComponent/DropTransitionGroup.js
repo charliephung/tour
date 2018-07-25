@@ -10,22 +10,24 @@ CSSTransition.childContextTypes = {
 };
 
 const DropTransitionGroup = ({ children }) => {
-  return (
-    <CSSTransitionGroup>
-      {React.Children.map(children, child => (
-        <CSSTransition
-          defaultStyle={{
-            transform: transit("scaleY(0)", 200, "ease-in-out")
-          }}
-          enterStyle={{ transform: transit("scaleY(1)", 200, "ease-in-out") }}
-          leaveStyle={{ transform: transit("scaleY(0)", 200, "ease-in-out") }}
-          activeStyle={{ transform: transit("scaleY(1)", 200, "ease-in-out") }}
-        >
-          {child}
-        </CSSTransition>
-      ))}
-    </CSSTransitionGroup>
-  );
+  const ui = React.Children.map(children, child => (
+    <CSSTransition
+      defaultStyle={{
+        transform: transit("scaleY(0)")
+      }}
+      transitionAppear
+      enterStyle={{ transform: transit("scaleY(1)", 200, "ease-in-out") }}
+      leaveStyle={{
+        transform: transit("translateX(-100%)", 200, "ease-in-out")
+      }}
+      activeStyle={{
+        transform: transit("scaleY(1)")
+      }}
+    >
+      {child}
+    </CSSTransition>
+  ));
+  return <CSSTransitionGroup>{ui}</CSSTransitionGroup>;
 };
 
 export default DropTransitionGroup;

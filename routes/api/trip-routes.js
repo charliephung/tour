@@ -6,12 +6,14 @@ const Review = require("../../models/Review");
 const passport = require("passport");
 // Validate
 const isAdmin = require("../../middleware/isAdmin");
+// mail
 
 const Validator = require("validator");
 const validateTrip = require("../../validator/validate-trip");
 const validateTripContent = require("../../validator/validate-trip-content");
 const validateTripContentGallery = require("../../validator/validate-trip-content-gallery");
 const validateTripReview = require("../../validator/validate-trip-review");
+const validateBooking = require("../../validator/validate-booking");
 
 router.post(
   "/test",
@@ -297,6 +299,24 @@ router.post(
         .catch(err => {
           return res.status(404).json(err);
         });
+    });
+  }
+);
+
+// @route /api/trips/:tripId/book
+// @desc rate a trip
+// @access Private
+// TODO
+router.post(
+  "/:tripId/book/",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    let { isValid, errors } = validateBooking(req.body);
+    if (!isValid) {
+      return res.status(400).json(errors);
+    }
+    Trip.findOne({ _id: req.params.tripId }).then(trip => {
+      return res.json({ success: "Successfully Book" });
     });
   }
 );

@@ -15,7 +15,11 @@ import {
   RATE_TRIP_LOADING_END,
   ADD_COMMENT,
   DELETE_COMMENT,
-  RATE_TRIP
+  RATE_TRIP,
+  ERROR,
+  BOOKING,
+  BOOKING_LOADING_START,
+  BOOKING_LOADING_END
 } from "../constants/actionTypes";
 
 export const actFetchTrips = location => {
@@ -73,10 +77,16 @@ export const actFetchTripContent = tripId => {
 
 export const actAddComment = (tripId, data) => dispatch => {
   dispatch({ type: ADD_COMMENT_LOADING_START });
-  api.user.comment(tripId, data).then(res => {
-    dispatch({ type: ADD_COMMENT, payload: res });
-    dispatch({ type: ADD_COMMENT_LOADING_END });
-  });
+  api.user
+    .comment(tripId, data)
+    .then(res => {
+      dispatch({ type: ADD_COMMENT, payload: res });
+      dispatch({ type: ADD_COMMENT_LOADING_END });
+    })
+    .catch(err => {
+      dispatch({ type: ADD_COMMENT_LOADING_END });
+      dispatch({ type: ERROR, payload: err.response.data });
+    });
 };
 export const actDeleteComment = (tripId, data) => dispatch => {
   dispatch({ type: DELETE_COMMENT_LOADING_START });
@@ -98,4 +108,21 @@ export const actRateTrip = (userId, tripId, data) => dispatch => {
     });
     dispatch({ type: RATE_TRIP_LOADING_END });
   });
+};
+
+export const actBook = (tripId, data) => dispatch => {
+  dispatch({ type: BOOKING_LOADING_START });
+  api.user
+    .book(tripId, data)
+    .then(res => {
+      dispatch({
+        type: BOOKING,
+        payload: res.data
+      });
+      dispatch({ type: BOOKING_LOADING_END });
+    })
+    .catch(err => {
+      dispatch({ type: BOOKING_LOADING_END });
+      dispatch({ type: ERROR, payload: err.response.data });
+    });
 };

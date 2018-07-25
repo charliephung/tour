@@ -26,6 +26,11 @@ export default {
       return axios
         .post(`/api/trips/${tripId}/rate/${data}`)
         .then(res => res.data);
+    },
+    book: (tripId, data) => {
+      return axios
+        .post(`/api/trips/${tripId}/book`, data)
+        .then(res => res.data);
     }
   }
 };
