@@ -77,7 +77,6 @@ export class Header extends Component {
   }
 
   render() {
-    const { heading, button } = this.props;
     return (
       <FluidHeader>
         {this.props.renderImage(this.props.headerImage, this.state.activeIndex)}

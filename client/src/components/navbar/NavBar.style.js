@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { Flex } from "../../theme/style";
 
 export const FixedNavbar = styled.div`
   width: 100%;

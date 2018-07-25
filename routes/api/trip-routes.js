@@ -51,8 +51,6 @@ router.get("/:tripId", (req, res) => {
       return res.json(trips);
     })
     .catch(err => {
-      console.log(err);
-
       errors.error = errormsg["500"];
       return res.status(500).json(errors);
     });

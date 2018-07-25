@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 import { actFetchTrips } from "../actions/trip";
 import { actLoadingStart, actLoadingEnd } from "../actions/async";
 // Ulti
-import isEmpty from "../utils/isEmpty";
 import { color } from "../theme/color";
 // Component
 import FeatureCard from "../components/homepage/FeatureCard";
@@ -60,11 +59,6 @@ const headerImage = [
       "https://static.lantoa.net/wp-content/uploads/2018/04/12111220/1200px-Tatev_Monastery_Armenia.jpg"
   }
 ];
-const lookupLocation = {
-  "sai gon": "sai gon",
-  "da lat": "da lat",
-  "ha noi": "ha noi"
-};
 // Trip nav
 const tripNav = [
   {
@@ -293,7 +287,7 @@ export class HomePage extends Component {
                 <img
                   style={{ width: "100%", padding: "0 4rem" }}
                   src="https://images.unsplash.com/photo-1511198384845-3f4e85bfe1c1?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=14c21dc56ff09ea30bc9cd301e8875d3&auto=format&fit=crop&w=1351&q=80"
-                  alt="image"
+                  alt=""
                 />
               </Col>
             </Row>

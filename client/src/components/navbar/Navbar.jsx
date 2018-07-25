@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { NavList, NavListItem, Nav } from "./NavBar.style";
 import { Container } from "../../theme/style";
 // actions
-import { actOpenModal, actCloseModal } from "../../actions/modal";
+import { actOpenModal } from "../../actions/modal";
 import { actLogout, actGoogleLogin } from "../../actions/auth";
 // ulti
 import isEmpty from "../../utils/isEmpty";

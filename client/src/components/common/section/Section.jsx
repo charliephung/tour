@@ -1,6 +1,5 @@
-import React, { Component, Children } from "react";
+import React, { Component } from "react";
 import * as Scroll from "react-scroll/modules";
-import { fork } from "child_process";
 
 const onAnimatedScroll = (offsetHeight, duration = 500) => {
   Scroll.animateScroll.scrollTo(offsetHeight, {

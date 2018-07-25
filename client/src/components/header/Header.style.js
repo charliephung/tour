@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { media } from "../../theme/style";
 
 export const FluidHeader = styled.header`
   width: 100%;

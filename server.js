@@ -18,6 +18,16 @@ const headerImagesRoutes = require("./routes/api/header-image-routes");
 const tripsRoutes = require("./routes/api/trip-routes");
 const authRoutes = require("./routes/api/user-routes");
 
+// Server static assets if in production
+if (process.env.NODE_ENV === "production") {
+  // sett static folder
+  app.use(express.static("client/build"));
+
+  app.get("*", (req, res) => {
+    res.sendfile(path.resolve(__dirname, "client", "build", "index.html"));
+  });
+}
+
 // Connect database
 mongoose
   .connect(keys.mongoURI)

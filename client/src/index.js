@@ -9,7 +9,6 @@ import rootReducer from "./reducer/rootReducer";
 import jwtDecode from "jwt-decode";
 // act type
 import { SET_USER_TOKEN, REMOVE_USER_TOKEN } from "./constants/actionTypes";
-import setAuthToken from "./utils/setAuthToken";
 // Create store
 const store = createStore(
   rootReducer,

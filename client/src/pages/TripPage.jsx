@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
 import * as Scroll from "react-scroll/modules";
 import { Link } from "react-router-dom";
 // Redux
@@ -12,7 +11,7 @@ import {
   actDeleteComment,
   actRateTrip
 } from "../actions/trip";
-import { uiReducer, activeIndexReducer } from "./tripReducer";
+import { uiReducer, activeIndexReducer } from "./stateReducer/tripReducer";
 // utils
 import isEmpty from "../utils/isEmpty";
 import { color } from "../theme/color";

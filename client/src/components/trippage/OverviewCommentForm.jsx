@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { FormGroup, Input } from "../form/authForm/AuthForm.style";
+import { FormGroup } from "../form/authForm/AuthForm.style";
 import { Row, Button, Textarea } from "../../theme/style";
 import { color } from "../../theme/color";
 
@@ -37,7 +37,7 @@ export class OverviewCommentForm extends Component {
       <form onSubmit={this.onSubmit}>
         <FormGroup>
           <div style={{ display: "flex" }}>
-            <img style={{ height: "60px" }} src={auth.avatar} />
+            <img style={{ height: "60px" }} src={auth.avatar} alt="" />
             <Row>
               <Textarea
                 style={style}

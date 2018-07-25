@@ -57,7 +57,6 @@ export class Book extends Component {
   render() {
     const { auth, loading, error } = this.props;
     const { name, email, people, startDate, endDate } = this.state;
-    console.log(loading);
 
     return (
       <div

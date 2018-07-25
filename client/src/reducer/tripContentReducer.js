@@ -21,7 +21,7 @@ const tripContentReducer = (state = initialState, actions) => {
       return { ...state, ...state.reviews.splice(index, 1) };
     case RATE_TRIP:
       const { userId, data } = actions.payload;
-      index = state.rating.findIndex(ele => ele.user == userId);
+      index = state.rating.findIndex(ele => ele.user === userId);
       if (index === -1) {
         return {
           ...state,

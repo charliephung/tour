@@ -17,7 +17,6 @@ export class Modal extends Component {
   componentDidMount() {
     modalRoot.appendChild(this.modal);
     body[0].style.overflow = "hidden";
-    window.sro;
   }
 
   componentWillUnmount() {

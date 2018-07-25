@@ -13,7 +13,7 @@ const FeatureTrip = props => {
   } = props.trip;
   const rate = rating.map(ele => ele.rate);
   let avgRate = Math.ceil(rate.reduce((a, b) => a + b, 0) / rate.length);
-  avgRate === NaN ? 0 : avgRate;
+  avgRate = isNaN(avgRate) ? 0 : avgRate;
 
   return (
     <Card
