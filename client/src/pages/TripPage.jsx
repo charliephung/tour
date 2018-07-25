@@ -313,7 +313,7 @@ export class TripPage extends Component {
                               this.section.getFlagsOffSet().subNav
                                 .offsetHeight +
                               10}px`,
-                            width: "fit-content"
+                            width: "min-content"
                           }
                         : {}
                     }

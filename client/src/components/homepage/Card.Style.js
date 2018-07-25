@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { media } from "../../theme/style";
 export const Card = styled.div`
-  width: 470px;
+  width: 350px;
   ${media.phone`width: 320px;`};
   ${media.smallPhone`width: 300px;`};
   overflow: hidden;

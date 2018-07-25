@@ -38,7 +38,7 @@ injectGlobal`
 
   html {
     box-sizing: border-box;
-    font-size: 62.5%;
+    font-size: 50.5%;
     font-family: sans-serif;
     ${media.tablet`font-size: 50%;`}
     ${media.phone`font-size: 40%;`}
@@ -67,7 +67,7 @@ export const options = css`
 
 export const Container = styled.div`
   min-width: 32rem;
-  max-width: 140rem;
+  max-width: 100rem;
   margin: auto;
   padding: 1rem 0;
   ${flex};

@@ -64,7 +64,7 @@ export class Book extends Component {
           padding: "1rem 2rem",
           boxShadow: "rgba(0, 0, 0, 0.3) 0rem 0.1rem 1rem",
           position: "relative",
-          width: "fit-content"
+          width: "min-content"
         }}
       >
         {isEmpty(auth) && (
