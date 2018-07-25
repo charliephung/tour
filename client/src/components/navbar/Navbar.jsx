@@ -52,7 +52,7 @@ export class Navbar extends Component {
               </NavListItem>
               {/* <NavListItem>
                 <i className="fas fa-user-plus" />
-                Sign up
+                Sign up - ""
               </NavListItem> */}
             </React.Fragment>
           )
