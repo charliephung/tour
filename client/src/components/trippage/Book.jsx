@@ -55,7 +55,7 @@ export class Book extends Component {
   };
 
   render() {
-    const { auth, loading, error } = this.props;
+    const { auth, loading, error, pricePerDay, pricePerPerson } = this.props;
     const { name, email, people, startDate, endDate } = this.state;
 
     return (
@@ -158,7 +158,9 @@ export class Book extends Component {
               </Button>
             </div>
           </FormGroup>
-          <h3 className="heading-3">Total: $85</h3>
+          <h3 className="heading-3">
+            Total: ${pricePerDay + pricePerPerson * people}
+          </h3>
           <Button theme={{ bgColor: color.orange, width: "100%" }}>Book</Button>
         </form>
       </div>

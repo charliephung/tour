@@ -319,7 +319,11 @@ export class TripPage extends Component {
                     }
                     flagName="book"
                   >
-                    <Book params={this.props.match.params} />
+                    <Book
+                      pricePerDay={pricePerDay}
+                      pricePerPerson={pricePerPerson}
+                      params={this.props.match.params}
+                    />
                   </Section.Flag>
                 </Col>
               </Row>
