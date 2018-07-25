@@ -48,12 +48,12 @@ export class Navbar extends Component {
             <React.Fragment>
               <NavListItem onClick={() => contextval.actOpenModal()}>
                 <i className="fas fa-sign-in-alt" />
-                Login
+                Login-(Comming soon Please use google instead)
               </NavListItem>
-              <NavListItem>
+              {/* <NavListItem>
                 <i className="fas fa-user-plus" />
                 Sign up
-              </NavListItem>
+              </NavListItem> */}
             </React.Fragment>
           )
         }
