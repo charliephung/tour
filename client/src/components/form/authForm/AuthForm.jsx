@@ -7,7 +7,7 @@ import { FormContainer, Input } from "./AuthForm.style";
 import { Button } from "../../../theme/style";
 import { color } from "../../../theme/color";
 // Hoc
-import DropTransitionGroup from "../../../HOComponent/DropTransitionGroup";
+import Drop from "../../../HOComponent/DropTransitionGroup";
 // actions
 
 export class AuthForm extends Component {
@@ -33,9 +33,9 @@ export class AuthForm extends Component {
 
   render() {
     return (
-      <DropTransitionGroup>
-        {this.state.showForm && (
-          <FormContainer>
+      <Drop>
+        {this.state.showForm ? (
+          <FormContainer key={0}>
             <span
               style={{
                 position: "absolute",
@@ -94,8 +94,8 @@ export class AuthForm extends Component {
               />
             </GoogleLogin>
           </FormContainer>
-        )}
-      </DropTransitionGroup>
+        ) : null}
+      </Drop>
     );
   }
 }

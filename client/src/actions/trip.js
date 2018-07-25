@@ -90,10 +90,15 @@ export const actAddComment = (tripId, data) => dispatch => {
 };
 export const actDeleteComment = (tripId, data) => dispatch => {
   dispatch({ type: DELETE_COMMENT_LOADING_START });
-  api.user.deleteComment(tripId, data).then(res => {
-    dispatch({ type: DELETE_COMMENT, payload: data.commentId });
-    dispatch({ type: DELETE_COMMENT_LOADING_END });
-  });
+  api.user
+    .deleteComment(tripId, data)
+    .then(res => {
+      dispatch({ type: DELETE_COMMENT, payload: data.commentId });
+      dispatch({ type: DELETE_COMMENT_LOADING_END });
+    })
+    .catch(err => {
+      dispatch({ type: DELETE_COMMENT_LOADING_END });
+    });
 };
 
 export const actRateTrip = (userId, tripId, data) => dispatch => {
